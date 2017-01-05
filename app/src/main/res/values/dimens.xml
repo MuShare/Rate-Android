@@ -1,4 +1,8 @@
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
-    <dimen name="text_margin">16dp</dimen>
+    <dimen name="list_title_margin">16dp</dimen>
+    <dimen name="list_horizontal_margin">16dp</dimen>
+    <dimen name="list_vertical_margin">8dp</dimen>
+    <dimen name="flag_width">48dp</dimen>
+    <dimen name="flag_height">36dp</dimen>
+    <dimen name="flag_margin_right">8dp</dimen>
 </resources>

@@ -1,4 +1,4 @@
-package mushare.org.rate_android;
+package mushare.org.rate;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

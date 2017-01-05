@@ -1,4 +1,4 @@
-package mushare.org.rate_android;
+package mushare.org.rate;
 
 import org.junit.Test;
 

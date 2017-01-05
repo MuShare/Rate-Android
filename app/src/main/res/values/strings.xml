@@ -6,6 +6,13 @@
     <string name="tab_news">News</string>
     <string name="tab_me">Me</string>
 
+    <string name="base_currency">Base Currency</string>
+    <string name="base_currency_default_number">1.0</string>
+    <string name="exchange_currency">Exchange Currency</string>
+
+    <string name="error_refresh_fail">Refresh failed</string>
+    <string name="error_refresh_success">Refresh succeed</string>
+
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

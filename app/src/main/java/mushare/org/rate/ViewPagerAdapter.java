@@ -1,17 +1,22 @@
-package mushare.org.rate_android;
+package mushare.org.rate;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import mushare.org.rate.fragment.me.MeFragment;
+import mushare.org.rate.fragment.news.NewsFragment;
+import mushare.org.rate.fragment.rate.RateFragment;
+import mushare.org.rate.fragment.subscribe.SubscribeFragment;
+
 /**
  * Created by dklap on 12/16/2016.
  */
 
-public class ViewPagerAdapter extends FragmentPagerAdapter {
-    Fragment[] fragments = new Fragment[4];
+class ViewPagerAdapter extends FragmentPagerAdapter {
+    private Fragment[] fragments = new Fragment[4];
 
-    public ViewPagerAdapter(FragmentManager fm) {
+    ViewPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 

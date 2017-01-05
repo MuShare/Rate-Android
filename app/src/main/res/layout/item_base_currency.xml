@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/list_vertical_margin"
+    android:paddingEnd="@dimen/list_horizontal_margin"
+    android:paddingLeft="@dimen/list_horizontal_margin"
+    android:paddingRight="@dimen/list_horizontal_margin"
+    android:paddingStart="@dimen/list_horizontal_margin"
+    android:paddingTop="@dimen/list_vertical_margin">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cardViewCountryFlag"
+        android:layout_width="@dimen/flag_width"
+        android:layout_height="@dimen/flag_height"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true">
+    </android.support.v7.widget.CardView>
+
+    <EditText
+        android:id="@+id/editTextBase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:gravity="end"
+        android:hint="@string/base_currency_default_number"
+        android:inputType="numberDecimal"
+        android:imeOptions="flagNoExtractUi|actionDone"
+        android:imeActionId="6"
+        android:maxLength="12"
+        android:enabled="false" />
+
+    <TextView
+        android:id="@+id/textViewBaseCurrencyName"
+        style="@style/TextAppearance.AppCompat.Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/flag_margin_right"
+        android:layout_marginStart="@dimen/flag_margin_right"
+        android:layout_toEndOf="@+id/cardViewCountryFlag"
+        android:layout_toLeftOf="@+id/editTextBase"
+        android:layout_toRightOf="@+id/cardViewCountryFlag"
+        android:layout_toStartOf="@+id/editTextBase"
+        android:textAllCaps="true" />
+
+    <TextView
+        android:id="@+id/textViewBaseCurrencyInfo"
+        style="@style/TextAppearance.AppCompat.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewBaseCurrencyName"
+        android:layout_marginLeft="@dimen/flag_margin_right"
+        android:layout_marginStart="@dimen/flag_margin_right"
+        android:layout_toEndOf="@+id/cardViewCountryFlag"
+        android:layout_toLeftOf="@+id/editTextBase"
+        android:layout_toRightOf="@+id/cardViewCountryFlag"
+        android:layout_toStartOf="@+id/editTextBase" />
+
+</RelativeLayout>

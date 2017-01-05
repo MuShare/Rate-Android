@@ -1,4 +1,4 @@
-package mushare.org.rate_android;
+package mushare.org.rate;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -17,10 +17,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setTitle(R.string.tab_rate);
+//        setTitle(R.string.tab_rate);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
 
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
                 viewPager.setCurrentItem(tab.getPosition());
                 switch (tab.getPosition()) {
                     case 0:
-                        setTitle(getString(R.string.tab_rate));
+                        setTitle(getString(R.string.app_name));
                         break;
                     case 1:
                         setTitle(getString(R.string.tab_subscribe));
