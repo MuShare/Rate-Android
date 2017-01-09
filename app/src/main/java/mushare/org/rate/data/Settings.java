@@ -11,12 +11,12 @@ public class Settings {
         return baseCurrencyCid;
     }
 
-    public static Currency getBaseCurrency() {
-        if (baseCurrencyCid == null) return null;
-        else return CurrenciesList.get(baseCurrencyCid);
-    }
-
     public static void setBaseCurrencyCid(String baseCurrencyCid) {
         Settings.baseCurrencyCid = baseCurrencyCid;
+    }
+
+    public static MyCurrency getBaseCurrency() {
+        if (baseCurrencyCid == null) return null;
+        else return CurrenciesList.get(baseCurrencyCid);
     }
 }

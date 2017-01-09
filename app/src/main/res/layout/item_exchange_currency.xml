@@ -1,57 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/exchangeCurrency"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:clickable="true"
     android:paddingBottom="@dimen/list_vertical_margin"
-    android:paddingEnd="@dimen/list_horizontal_margin"
-    android:paddingLeft="@dimen/list_horizontal_margin"
-    android:paddingRight="@dimen/list_horizontal_margin"
-    android:paddingStart="@dimen/list_horizontal_margin"
-    android:paddingTop="@dimen/list_vertical_margin">
+    android:paddingTop="@dimen/list_vertical_margin"
+    tools:ignore="ContentDescription">
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardViewCountryFlag"
-        android:layout_width="@dimen/flag_width"
-        android:layout_height="@dimen/flag_height"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_centerVertical="true">
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/flag_horizontal_margin"
+        android:layout_marginLeft="@dimen/list_horizontal_margin"
+        android:layout_marginRight="@dimen/flag_horizontal_margin"
+        android:layout_marginStart="@dimen/list_horizontal_margin"
+        app:cardCornerRadius="@dimen/flag_corner"
+        app:cardPreventCornerOverlap="false">
+
+        <ImageView
+            android:id="@+id/imageViewCountryFlag"
+            android:layout_width="@dimen/flag_width"
+            android:layout_height="@dimen/flag_height"
+            android:scaleType="fitXY" />
     </android.support.v7.widget.CardView>
 
     <TextView
         android:id="@+id/textViewExchangeRate"
-        style="@style/TextAppearance.AppCompat.Medium"
+        style="@style/AppTheme.TextAppearanceSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/list_horizontal_margin"
+        android:layout_marginLeft="@dimen/rate_horizontal_margin"
+        android:layout_marginRight="@dimen/list_horizontal_margin"
+        android:layout_marginStart="@dimen/rate_horizontal_margin" />
 
     <TextView
-        android:id="@+id/textViewCurrencyName"
-        style="@style/TextAppearance.AppCompat.Medium"
+        android:id="@+id/textViewCurrencyCode"
+        style="@style/AppTheme.TextAppearanceNormal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="@dimen/flag_margin_right"
-        android:layout_marginStart="@dimen/flag_margin_right"
         android:layout_toEndOf="@+id/cardViewCountryFlag"
         android:layout_toLeftOf="@+id/textViewExchangeRate"
         android:layout_toRightOf="@+id/cardViewCountryFlag"
         android:layout_toStartOf="@+id/textViewExchangeRate"
+        android:ellipsize="end"
+        android:singleLine="true"
         android:textAllCaps="true" />
 
     <TextView
-        android:id="@+id/textViewCurrencyInfo"
-        style="@style/TextAppearance.AppCompat.Small"
+        android:id="@+id/textViewCurrencyName"
+        style="@style/AppTheme.TextAppearanceTiny"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewCurrencyName"
-        android:layout_marginLeft="@dimen/flag_margin_right"
-        android:layout_marginStart="@dimen/flag_margin_right"
+        android:layout_below="@+id/textViewCurrencyCode"
         android:layout_toEndOf="@+id/cardViewCountryFlag"
         android:layout_toLeftOf="@+id/textViewExchangeRate"
         android:layout_toRightOf="@+id/cardViewCountryFlag"
-        android:layout_toStartOf="@+id/textViewExchangeRate" />
+        android:layout_toStartOf="@+id/textViewExchangeRate"
+        android:ellipsize="end"
+        android:singleLine="true" />
 
 </RelativeLayout>

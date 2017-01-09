@@ -8,7 +8,7 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 import mushare.org.rate.data.CurrenciesList;
-import mushare.org.rate.data.Currency;
+import mushare.org.rate.data.MyCurrency;
 import mushare.org.rate.data.RateList;
 import mushare.org.rate.data.Settings;
 
@@ -33,7 +33,7 @@ public class HttpHelper {
                     Settings.setBaseCurrencyCid(currencies.getJSONObject(0).getString("cid"));
                 for (int i = 0; i < currencies.length(); i++) {
                     JSONObject currency = currencies.getJSONObject(i);
-                    CurrenciesList.put(currency.getString("cid"), new Currency(currency.getString("code"), currency.getString("icon"), currency.getString("name")));
+                    CurrenciesList.put(currency.getString("cid"), new MyCurrency(currency.getString("code"), currency.getString("icon"), currency.getString("name")));
                 }
                 CurrenciesList.setRevision(result.getInt("revision"));
             } catch (JSONException e) {

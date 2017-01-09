@@ -6,25 +6,49 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
     <style name="AppTheme" parent="AppThemeBase">
         <!-- Customize your theme here. -->
     </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light" />
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" >
-        <item name="android:textColor">@color/colorAccent</item>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark">
+        <!--<item name="android:textColor">@color/colorAccent</item>-->
     </style>
+
     <style name="AppTheme.ListTitle">
         <item name="textAllCaps">true</item>
         <item name="android:textColor">@color/colorAccent</item>
-        <item name="android:layout_margin">@dimen/list_title_margin</item>
+        <item name="android:layout_marginLeft">@dimen/list_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/list_horizontal_margin</item>
+        <item name="android:layout_marginBottom">@dimen/list_vertical_margin</item>
+        <item name="android:layout_marginTop">@dimen/list_vertical_margin</item>
     </style>
+
     <style name="AppTheme.Divider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">2dp</item>
         <item name="android:background">?android:attr/listDivider</item>
+    </style>
+
+    <style name="AppTheme.TextAppearanceNormal">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/colorTextPrimary</item>
+    </style>
+
+    <style name="AppTheme.TextAppearanceSmall">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/colorTextPrimary</item>
+    </style>
+
+    <style name="AppTheme.TextAppearanceTiny">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/colorTextSecondary</item>
     </style>
 </resources>
