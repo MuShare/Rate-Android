@@ -1,4 +1,4 @@
-package mushare.org.rate.data;
+package org.mushare.rate.data;
 
 /**
  * Created by dklap on 1/3/2017.

@@ -1,4 +1,4 @@
-package mushare.org.rate.fragment.rate;
+package org.mushare.rate.fragment.rate;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -12,9 +12,9 @@ import android.widget.TextView;
 import java.util.List;
 import java.util.Locale;
 
-import mushare.org.rate.R;
-import mushare.org.rate.data.CurrencyRate;
-import mushare.org.rate.data.MyCurrency;
+import org.mushare.rate.R;
+import org.mushare.rate.data.CurrencyRate;
+import org.mushare.rate.data.MyCurrency;
 
 /**
  * Created by dklap on 12/31/2016.

@@ -1,4 +1,4 @@
-package mushare.org.rate.url;
+package org.mushare.rate.url;
 
 import java.io.BufferedReader;
 import java.io.IOException;

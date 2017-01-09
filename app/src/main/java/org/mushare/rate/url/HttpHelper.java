@@ -1,4 +1,4 @@
-package mushare.org.rate.url;
+package org.mushare.rate.url;
 
 
 import org.json.JSONArray;
@@ -7,10 +7,10 @@ import org.json.JSONObject;
 
 import java.util.Iterator;
 
-import mushare.org.rate.data.CurrenciesList;
-import mushare.org.rate.data.MyCurrency;
-import mushare.org.rate.data.RateList;
-import mushare.org.rate.data.Settings;
+import org.mushare.rate.data.CurrenciesList;
+import org.mushare.rate.data.MyCurrency;
+import org.mushare.rate.data.RateList;
+import org.mushare.rate.data.Settings;
 
 /**
  * Created by dklap on 1/3/2017.

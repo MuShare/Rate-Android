@@ -1,4 +1,4 @@
-package mushare.org.rate.url;
+package org.mushare.rate.url;
 
 /**
  * Created by dklap on 1/4/2017.

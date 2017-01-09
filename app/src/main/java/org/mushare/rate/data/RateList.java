@@ -1,4 +1,4 @@
-package mushare.org.rate.data;
+package org.mushare.rate.data;
 
 import java.util.HashMap;
 import java.util.List;

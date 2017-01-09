@@ -1,13 +1,13 @@
-package mushare.org.rate;
+package org.mushare.rate;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import mushare.org.rate.fragment.me.MeFragment;
-import mushare.org.rate.fragment.news.NewsFragment;
-import mushare.org.rate.fragment.rate.RateFragment;
-import mushare.org.rate.fragment.subscribe.SubscribeFragment;
+import org.mushare.rate.fragment.me.MeFragment;
+import org.mushare.rate.fragment.news.NewsFragment;
+import org.mushare.rate.fragment.rate.RateFragment;
+import org.mushare.rate.fragment.subscribe.SubscribeFragment;
 
 /**
  * Created by dklap on 12/16/2016.

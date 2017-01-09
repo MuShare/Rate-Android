@@ -1,4 +1,4 @@
-package mushare.org.rate.fragment.news;
+package org.mushare.rate.fragment.news;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
