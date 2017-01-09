@@ -2,8 +2,8 @@
     <dimen name="list_horizontal_margin">16dp</dimen>
     <dimen name="list_vertical_margin">8dp</dimen>
     <dimen name="rate_horizontal_margin">8dp</dimen>
-    <dimen name="flag_width">36dp</dimen>
-    <dimen name="flag_height">24dp</dimen>
+    <dimen name="flag_width">42dp</dimen>
+    <dimen name="flag_height">28dp</dimen>
     <dimen name="flag_horizontal_margin">8dp</dimen>
     <dimen name="flag_corner">4dp</dimen>
 </resources>

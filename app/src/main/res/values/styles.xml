@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppThemeBase" parent="Theme.AppCompat">
+    <style name="AppThemeBase" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -38,17 +38,17 @@
     </style>
 
     <style name="AppTheme.TextAppearanceNormal">
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">17sp</item>
         <item name="android:textColor">@color/colorTextPrimary</item>
     </style>
 
     <style name="AppTheme.TextAppearanceSmall">
         <item name="android:textSize">17sp</item>
-        <item name="android:textColor">@color/colorTextPrimary</item>
+        <item name="android:textColor">@color/colorTextSecondary</item>
     </style>
 
     <style name="AppTheme.TextAppearanceTiny">
         <item name="android:textSize">10sp</item>
-        <item name="android:textColor">@color/colorTextSecondary</item>
+        <item name="android:textColor">@color/colorTextPrimary</item>
     </style>
 </resources>

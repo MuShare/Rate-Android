@@ -2,13 +2,13 @@
 <resources>
     <color name="colorPrimary">#009688</color>
     <color name="colorPrimaryDark">#009688</color>
-    <color name="colorAccent">#e57373</color>
+    <color name="colorAccent">#009688</color>
 
-    <color name="colorBackground">#faf7f3</color>
-    <color name="colorToolbarBackground">#00bfa5</color>
-    <color name="colorToolbarText">#99343434</color>
-    <color name="colorTextPrimary">#CCFFFFFF</color>
-    <color name="colorTextSecondary">#80FFFFFF</color>
-    <color name="colorNavigationBar">@color/colorPrimaryDark</color>
+    <color name="colorBackground">#efefef</color>
+    <color name="colorToolbarBackground">#00b39a</color>
+    <color name="colorToolbarText">#ffffff</color>
+    <color name="colorTextPrimary">#555555</color>
+    <color name="colorTextSecondary">#009688</color>
+    <color name="colorNavigationBar">#000000</color>
 
 </resources>
