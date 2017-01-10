@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context="mushare.org.rate.org.mushare.rate.MainActivity">
+    tools:context="org.mushare.rate.MainActivity">
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -33,6 +33,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/exchange_currency" />
         </LinearLayout>
+
     </android.support.v4.widget.NestedScrollView>
 
     <android.support.v4.widget.SwipeRefreshLayout
