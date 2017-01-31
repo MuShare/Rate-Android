@@ -1,4 +1,5 @@
 <resources>
+    <dimen name="bottom_navigation_bar_height">56dp</dimen>
     <dimen name="list_horizontal_margin">16dp</dimen>
     <dimen name="list_vertical_margin">8dp</dimen>
     <dimen name="rate_horizontal_margin">8dp</dimen>

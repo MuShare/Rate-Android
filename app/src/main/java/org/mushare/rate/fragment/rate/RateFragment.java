@@ -1,15 +1,14 @@
 package org.mushare.rate.fragment.rate;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.ActionMode;
@@ -24,6 +23,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import org.mushare.rate.R;
 import org.mushare.rate.data.CurrenciesList;
@@ -61,6 +63,37 @@ public class RateFragment extends Fragment {
             savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rate, container, false);
 
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.app_name);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.colorToolbarText));
+        toolbar.inflateMenu(R.menu.menu_main);
+        MaterialSearchView searchView = (MaterialSearchView) view.findViewById(R.id.search_view);
+        searchView.setMenuItem(toolbar.getMenu().findItem(R.id.action_search));
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //Do some magic
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //Do some magic
+                return false;
+            }
+        });
+
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+                //Do some magic
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                //Do some magic
+            }
+        });
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
         // use this setting to improve performance if you know that changes
@@ -207,12 +240,10 @@ public class RateFragment extends Fragment {
         textViewBaseCurrencyName.setText(currency.getCode());
         textViewBaseCurrencyInfo.setText(currency.getName());
         editText.setEnabled(true);
-        int resID = getResources().getIdentifier("ic_flag_" + currency.getIcon(), "drawable",
-                getContext().getPackageName());
+        int resID = getResources().getIdentifier("ic_flag_" + currency.getIcon(),
+                "drawable", getContext().getPackageName());
         if (resID != 0) {
-
-            Drawable drawable = getResources().getDrawable(resID);
-            imageViewBaseCountryFlag.setImageDrawable(drawable);
+            imageViewBaseCountryFlag.setImageResource(resID);
         }
     }
 
@@ -234,17 +265,17 @@ public class RateFragment extends Fragment {
                     fragment.swipeRefreshLayout.setRefreshing(false);
                     break;
                 case MSG_REFRESH_FAIL:
-                    Snackbar.make(fragment.swipeRefreshLayout, R.string.error_refresh_fail,
-                            Snackbar.LENGTH_LONG).setAction(R.string.snackbar_action, new View
-                            .OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            fragment.swipeRefreshLayout.setRefreshing(true);
-                            fragment.refresh();
-                        }
-                    }).show();
-//                    Toast.makeText(fragment.getContext(), R.string.error_refresh_fail, Toast
-// .LENGTH_SHORT).show();
+//                    Snackbar.make(fragment.swipeRefreshLayout, R.string.error_refresh_fail,
+//                            Snackbar.LENGTH_LONG).setAction(R.string.snackbar_action, new View
+//                            .OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            fragment.swipeRefreshLayout.setRefreshing(true);
+//                            fragment.refresh();
+//                        }
+//                    }).show();
+                    Toast.makeText(fragment.getContext(), R.string.error_refresh_fail, Toast
+                            .LENGTH_SHORT).show();
                     fragment.swipeRefreshLayout.setRefreshing(false);
                     break;
             }

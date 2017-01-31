@@ -6,10 +6,9 @@
 
     <color name="colorBackground">#efefef</color>
     <color name="colorToolbarBackground">#00bfa5</color>
-    <color name="colorToolbarText">#99ffffff</color>
-    <color name="colorTabIndicator">#99ffffff</color>
+    <color name="colorToolbarText">#ffffff</color>
     <color name="colorTextPrimary">#8a000000</color>
     <color name="colorTextSecondary">#60000000</color>
-    <color name="colorNavigationBar">#000000</color>
 
+    <color name="colorBottomNavigationBackground">#E6FFFFFF</color>
 </resources>

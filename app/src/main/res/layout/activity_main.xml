@@ -1,55 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              tools:context="org.mushare.rate.MainActivity">
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                 xmlns:tools="http://schemas.android.com/tools"
+                                                 android:layout_width="match_parent"
+                                                 android:layout_height="match_parent"
+                                                 tools:context="org.mushare.rate.MainActivity">
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tabLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@color/colorToolbarBackground"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        app:tabIndicatorColor="@color/colorBackground">
-
-        <android.support.design.widget.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:icon="@drawable/tab_rate_selector"
-            android:text="@string/tab_rate"/>
-
-        <android.support.design.widget.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:icon="@drawable/tab_subscribe_selector"
-            android:text="@string/tab_subscribe"/>
-
-        <android.support.design.widget.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:icon="@drawable/tab_news_selector"
-            android:text="@string/tab_news"/>
-
-        <android.support.design.widget.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:icon="@drawable/tab_me_selector"
-            android:text="@string/tab_me"/>
-
-    </android.support.design.widget.TabLayout>
-
-    <android.support.v4.view.ViewPager
+    <org.mushare.rate.NoSwipeViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorBackground"
-        android:overScrollMode="never"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        android:overScrollMode="never"/>
 
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bottom_navigation_bar_height"
+        android:layout_gravity="bottom"
+        android:background="@color/colorBottomNavigationBackground"
+        app:menu="@menu/navigation_items"/>
     <!--<include layout="@layout/content_main" />-->
 
     <!--<android.support.design.widget.FloatingActionButton-->
@@ -61,4 +30,4 @@
     <!--app:layout_anchorGravity="bottom|end"-->
     <!--app:srcCompat="@android:drawable/ic_dialog_email" />-->
 
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>
