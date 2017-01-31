@@ -16,7 +16,7 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark"/>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark">
         <!--<item name="android:textColor">@color/colorAccent</item>-->
@@ -39,16 +39,16 @@
 
     <style name="AppTheme.TextAppearanceNormal">
         <item name="android:textSize">17sp</item>
-        <item name="android:textColor">@color/colorTextPrimary</item>
+        <item name="android:textColor">@color/colorAccent</item>
     </style>
 
     <style name="AppTheme.TextAppearanceSmall">
-        <item name="android:textSize">17sp</item>
-        <item name="android:textColor">@color/colorTextSecondary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/colorTextPrimary</item>
     </style>
 
     <style name="AppTheme.TextAppearanceTiny">
         <item name="android:textSize">10sp</item>
-        <item name="android:textColor">@color/colorTextPrimary</item>
+        <item name="android:textColor">@color/colorTextSecondary</item>
     </style>
 </resources>

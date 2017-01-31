@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
@@ -13,9 +12,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-//        setTitle(R.string.tab_rate);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -28,21 +24,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
-                switch (tab.getPosition()) {
-                    case 0:
-                        setTitle(getString(R.string.app_name));
-                        break;
-                    case 1:
-                        setTitle(getString(R.string.tab_subscribe));
-                        break;
-                    case 2:
-                        setTitle(getString(R.string.tab_news));
-                        break;
-                    case 3:
-                        setTitle(getString(R.string.tab_me));
-                        break;
-                }
+                viewPager.setCurrentItem(tab.getPosition(), false);
             }
 
             @Override

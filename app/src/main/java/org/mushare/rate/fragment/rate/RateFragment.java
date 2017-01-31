@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,12 +24,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.lang.ref.WeakReference;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
 
 import org.mushare.rate.R;
 import org.mushare.rate.data.CurrenciesList;
@@ -37,6 +32,11 @@ import org.mushare.rate.data.MyCurrency;
 import org.mushare.rate.data.RateList;
 import org.mushare.rate.data.Settings;
 import org.mushare.rate.url.HttpHelper;
+
+import java.lang.ref.WeakReference;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by dklap on 12/16/2016.
@@ -57,7 +57,8 @@ public class RateFragment extends Fragment {
     MessageHandler handler = new MessageHandler(new WeakReference<>(this));
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
+            savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rate, container, false);
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
@@ -115,7 +116,8 @@ public class RateFragment extends Fragment {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    InputMethodManager keyboard = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager keyboard = (InputMethodManager) getContext()
+                            .getSystemService(Context.INPUT_METHOD_SERVICE);
                     keyboard.hideSoftInputFromWindow(editText.getWindowToken(), 0);
                 }
             }
@@ -138,7 +140,8 @@ public class RateFragment extends Fragment {
                 try {
                     times = Double.parseDouble(text.replace(",", ""));
                     if (!text.contains(".")) {
-                        String formatted = String.format(Locale.getDefault(), "%1$,d", (long) times);
+                        String formatted = String.format(Locale.getDefault(), "%1$,d", (long)
+                                times);
                         if (!formatted.equals(s.toString())) {
 //                            editText.removeTextChangedListener(this);
                             editText.setText(formatted);
@@ -163,14 +166,15 @@ public class RateFragment extends Fragment {
                 if (editText.isEnabled()) {
                     editText.requestFocus();
                     editText.setSelection(editText.getText().length());
-                    InputMethodManager keyboard = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager keyboard = (InputMethodManager) getContext()
+                            .getSystemService(Context.INPUT_METHOD_SERVICE);
                     keyboard.showSoftInput(editText, InputMethodManager.SHOW_FORCED);
                 }
             }
         });
 
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorAccent);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -203,7 +207,8 @@ public class RateFragment extends Fragment {
         textViewBaseCurrencyName.setText(currency.getCode());
         textViewBaseCurrencyInfo.setText(currency.getName());
         editText.setEnabled(true);
-        int resID = getResources().getIdentifier("ic_flag_" + currency.getIcon(), "drawable", getContext().getPackageName());
+        int resID = getResources().getIdentifier("ic_flag_" + currency.getIcon(), "drawable",
+                getContext().getPackageName());
         if (resID != 0) {
 
             Drawable drawable = getResources().getDrawable(resID);
@@ -222,14 +227,24 @@ public class RateFragment extends Fragment {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_REFRESH_FINISH:
-//                    Toast.makeText(fragment.getContext(), R.string.error_refresh_success, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(fragment.getContext(), R.string.error_refresh_success, Toast
+// .LENGTH_SHORT).show();
                     fragment.setBaseCurrency();
                     fragment.adapter.notifyDataSetChanged();
                     fragment.swipeRefreshLayout.setRefreshing(false);
                     break;
                 case MSG_REFRESH_FAIL:
-//                    Snackbar.make(fragment.swipeRefreshLayout, R.string.error_refresh_fail, Snackbar.LENGTH_SHORT).show();
-                    Toast.makeText(fragment.getContext(), R.string.error_refresh_fail, Toast.LENGTH_SHORT).show();
+                    Snackbar.make(fragment.swipeRefreshLayout, R.string.error_refresh_fail,
+                            Snackbar.LENGTH_LONG).setAction(R.string.snackbar_action, new View
+                            .OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            fragment.swipeRefreshLayout.setRefreshing(true);
+                            fragment.refresh();
+                        }
+                    }).show();
+//                    Toast.makeText(fragment.getContext(), R.string.error_refresh_fail, Toast
+// .LENGTH_SHORT).show();
                     fragment.swipeRefreshLayout.setRefreshing(false);
                     break;
             }

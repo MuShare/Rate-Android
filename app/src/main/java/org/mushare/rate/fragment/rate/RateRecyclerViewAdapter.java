@@ -1,7 +1,6 @@
 package org.mushare.rate.fragment.rate;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,12 +8,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.List;
-import java.util.Locale;
-
 import org.mushare.rate.R;
 import org.mushare.rate.data.CurrencyRate;
 import org.mushare.rate.data.MyCurrency;
+
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by dklap on 12/31/2016.
@@ -56,8 +55,7 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
         holder.textViewCurrencyName.setText(myCurrency.getName());
         int resID = holder.getContext().getResources().getIdentifier("ic_flag_" + myCurrency.getIcon(), "drawable", holder.getContext().getPackageName());
         if (resID != 0) {
-            Drawable drawable = holder.getContext().getResources().getDrawable(resID);
-            holder.imageViewCountryFlag.setImageDrawable(drawable);
+            holder.imageViewCountryFlag.setImageResource(resID);
         }
     }
 

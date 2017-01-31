@@ -12,6 +12,7 @@
 
     <string name="error_refresh_fail">Refresh failed</string>
     <string name="error_refresh_success">Refresh succeeded</string>
+    <string name="snackbar_action">Retry</string>
 
     <string name="action_settings">Settings</string>
 </resources>

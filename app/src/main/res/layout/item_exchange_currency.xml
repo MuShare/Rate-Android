@@ -33,7 +33,7 @@
 
     <TextView
         android:id="@+id/textViewExchangeRate"
-        style="@style/AppTheme.TextAppearanceSmall"
+        style="@style/AppTheme.TextAppearanceNormal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -46,7 +46,7 @@
 
     <TextView
         android:id="@+id/textViewCurrencyCode"
-        style="@style/AppTheme.TextAppearanceNormal"
+        style="@style/AppTheme.TextAppearanceSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
