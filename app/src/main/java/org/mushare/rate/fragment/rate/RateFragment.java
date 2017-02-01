@@ -11,11 +11,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -50,6 +47,7 @@ public class RateFragment extends Fragment {
 
     List<CurrencyRate> dataSet = new LinkedList<>();
 
+    MaterialSearchView searchView;
     SwipeRefreshLayout swipeRefreshLayout;
     EditText editText;
     TextView textViewBaseCurrencyName, textViewBaseCurrencyInfo;
@@ -65,10 +63,12 @@ public class RateFragment extends Fragment {
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
-        toolbar.setTitleTextColor(getResources().getColor(R.color.colorToolbarText));
-        toolbar.inflateMenu(R.menu.menu_main);
-        MaterialSearchView searchView = (MaterialSearchView) view.findViewById(R.id.search_view);
+        toolbar.inflateMenu(R.menu.search_item);
+        searchView = (MaterialSearchView) view.findViewById(R.id.search_view);
         searchView.setMenuItem(toolbar.getMenu().findItem(R.id.action_search));
+        searchView.setTextColor(getResources().getColor(R.color.colorTextPrimary));
+        searchView.setHintTextColor(getResources().getColor(R.color.colorTextSecondary));
+        searchView.setHint(getResources().getString(R.string.action_search));
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -94,6 +94,7 @@ public class RateFragment extends Fragment {
                 //Do some magic
             }
         });
+
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
         // use this setting to improve performance if you know that changes
@@ -114,27 +115,6 @@ public class RateFragment extends Fragment {
         imageViewBaseCountryFlag = (ImageView) view.findViewById(R.id.imageViewBaseCountryFlag);
 
         editText = (EditText) view.findViewById(R.id.editTextBase);
-        editText.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                return false;
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-
-            }
-        });
         editText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -152,6 +132,10 @@ public class RateFragment extends Fragment {
                     InputMethodManager keyboard = (InputMethodManager) getContext()
                             .getSystemService(Context.INPUT_METHOD_SERVICE);
                     keyboard.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                } else {
+                    InputMethodManager keyboard = (InputMethodManager) getContext()
+                            .getSystemService(Context.INPUT_METHOD_SERVICE);
+                    keyboard.showSoftInput(editText, InputMethodManager.SHOW_FORCED);
                 }
             }
         });
@@ -198,10 +182,6 @@ public class RateFragment extends Fragment {
             public void onClick(View v) {
                 if (editText.isEnabled()) {
                     editText.requestFocus();
-                    editText.setSelection(editText.getText().length());
-                    InputMethodManager keyboard = (InputMethodManager) getContext()
-                            .getSystemService(Context.INPUT_METHOD_SERVICE);
-                    keyboard.showSoftInput(editText, InputMethodManager.SHOW_FORCED);
                 }
             }
         });
@@ -232,6 +212,14 @@ public class RateFragment extends Fragment {
         };
         thread.setDaemon(true);
         thread.start();
+    }
+
+    public boolean closeSearch() {
+        if (searchView != null && searchView.isSearchOpen()) {
+            searchView.closeSearch();
+            return true;
+        }
+        return false;
     }
 
     void setBaseCurrency() {

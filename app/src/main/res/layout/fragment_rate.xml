@@ -9,11 +9,10 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorToolbarBackground">
+        android:background="@color/colorToolbarBackground"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
         <FrameLayout
-            android:id="@+id/toolbar_container"
-            android:name="org.mushare.rate.fragment.rate.RateFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
@@ -21,13 +20,14 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
+                android:layout_height="wrap_content"
+                />
             <com.miguelcatalan.materialsearchview.MaterialSearchView
                 android:id="@+id/search_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </FrameLayout>
+
     </android.support.design.widget.AppBarLayout>
 
     <LinearLayout

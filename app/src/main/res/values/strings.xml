@@ -15,4 +15,5 @@
     <string name="snackbar_action">Retry</string>
 
     <string name="action_settings">Settings</string>
+    <string name="action_search">Search…</string>
 </resources>

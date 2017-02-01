@@ -9,21 +9,22 @@ import android.widget.EditText;
  * Created by dklap on 1/9/2017.
  */
 
-public class CurrencyEditText extends EditText {
-    public CurrencyEditText(Context context) {
+public class BaseCurrencyEditText extends EditText {
+    public BaseCurrencyEditText(Context context) {
         super(context);
     }
 
-    public CurrencyEditText(Context context, AttributeSet attrs) {
+    public BaseCurrencyEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CurrencyEditText(Context context, AttributeSet attrs, int defStyleAttr) {
+    public BaseCurrencyEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @TargetApi(21)
-    public CurrencyEditText(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public BaseCurrencyEditText(Context context, AttributeSet attrs, int defStyleAttr, int
+            defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 

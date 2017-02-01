@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/baseCurrency"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:focusableInTouchMode="true"
-    android:paddingBottom="@dimen/list_vertical_margin"
-    android:paddingTop="@dimen/list_vertical_margin"
-    tools:ignore="ContentDescription">
+<org.mushare.rate.fragment.rate.BaseCurrencyLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:id="@+id/baseCurrency"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="wrap_content"
+                                                   android:focusableInTouchMode="true"
+                                                   android:paddingBottom="@dimen/list_vertical_margin"
+                                                   android:paddingTop="@dimen/list_vertical_margin"
+                                                   tools:ignore="ContentDescription">
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardViewCountryFlag"
@@ -30,7 +30,7 @@
             android:scaleType="fitXY" />
     </android.support.v7.widget.CardView>
 
-    <org.mushare.rate.fragment.rate.CurrencyEditText
+    <org.mushare.rate.fragment.rate.BaseCurrencyEditText
         android:id="@+id/editTextBase"
         style="@style/AppTheme.TextAppearanceNormal"
         android:layout_width="wrap_content"
@@ -78,4 +78,4 @@
         android:ellipsize="end"
         android:singleLine="true" />
 
-</RelativeLayout>
+</org.mushare.rate.fragment.rate.BaseCurrencyLayout>
