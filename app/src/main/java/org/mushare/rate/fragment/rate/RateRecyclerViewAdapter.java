@@ -20,15 +20,15 @@ import java.util.Locale;
  */
 class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapter.ViewHolder> {
     private List<CurrencyRate> mDataset;
-    private double times = 1d;
+    private double base = 1d;
 
     // Provide a suitable constructor (depends on the kind of dataset)
     RateRecyclerViewAdapter(List<CurrencyRate> myDataset) {
         mDataset = myDataset;
     }
 
-    void setTimes(double times) {
-        this.times = times;
+    void setBase(double base) {
+        this.base = base;
     }
 
     // Create new views (invoked by the layout manager)
@@ -50,7 +50,8 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
         CurrencyRate currencyRate = mDataset.get(position);
         MyCurrency myCurrency = currencyRate.getCurrency();
 //        Currency currency = Currency.getInstance(myCurrency.getCode());
-        holder.textViewExchangeRate.setText(String.format(Locale.getDefault(), "%1$,.2f", times * currencyRate.getRate()));
+        holder.textViewExchangeRate.setText(String.format(Locale.getDefault(), "%1$,.2f", base *
+                currencyRate.getRate()));
         holder.textViewCurrencyCode.setText(myCurrency.getCode());
         holder.textViewCurrencyName.setText(myCurrency.getName());
         int resID = holder.getContext().getResources().getIdentifier("ic_flag_" + myCurrency.getIcon(), "drawable", holder.getContext().getPackageName());

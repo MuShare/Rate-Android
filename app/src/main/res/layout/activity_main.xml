@@ -1,24 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                 xmlns:tools="http://schemas.android.com/tools"
-                                                 android:layout_width="match_parent"
-                                                 android:layout_height="match_parent"
-                                                 tools:context="org.mushare.rate.MainActivity">
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.mushare.rate.MainActivity">
 
-    <org.mushare.rate.NoSwipeViewPager
-        android:id="@+id/viewPager"
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <org.mushare.rate.NoSwipeViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"/>
+
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/bottom_navigation_bar_height"
+            android:layout_gravity="bottom"
+            android:background="@color/colorBottomNavigationBackground"
+            app:menu="@menu/navigation_items"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:background="@color/colorToolbarBackground"/>
+    </android.support.design.widget.CoordinatorLayout>
+
+    <org.mushare.rate.MyFloatingSearchView
+        android:id="@+id/floating_search_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:overScrollMode="never"/>
+        app:floatingSearch_leftActionMode="noLeftAction"
+        app:floatingSearch_searchBarMarginLeft="@dimen/search_bar_horizontal_margin"
+        app:floatingSearch_searchBarMarginRight="@dimen/search_bar_horizontal_margin"
+        app:floatingSearch_searchBarMarginTop="36dp"
+        app:floatingSearch_searchHint="@string/action_search"
+        app:floatingSearch_showSearchKey="true"
+        app:floatingSearch_suggestionsListAnimDuration="250"/>
 
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_navigation_bar_height"
-        android:layout_gravity="bottom"
-        android:background="@color/colorBottomNavigationBackground"
-        app:menu="@menu/navigation_items"/>
     <!--<include layout="@layout/content_main" />-->
 
     <!--<android.support.design.widget.FloatingActionButton-->
@@ -30,4 +54,4 @@
     <!--app:layout_anchorGravity="bottom|end"-->
     <!--app:srcCompat="@android:drawable/ic_dialog_email" />-->
 
-</android.support.design.widget.CoordinatorLayout>
+</FrameLayout>

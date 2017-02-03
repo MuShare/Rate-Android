@@ -13,6 +13,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -22,8 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.miguelcatalan.materialsearchview.MaterialSearchView;
-
+import org.mushare.rate.MainActivity;
 import org.mushare.rate.R;
 import org.mushare.rate.data.CurrenciesList;
 import org.mushare.rate.data.CurrencyRate;
@@ -47,7 +47,6 @@ public class RateFragment extends Fragment {
 
     List<CurrencyRate> dataSet = new LinkedList<>();
 
-    MaterialSearchView searchView;
     SwipeRefreshLayout swipeRefreshLayout;
     EditText editText;
     TextView textViewBaseCurrencyName, textViewBaseCurrencyInfo;
@@ -64,34 +63,13 @@ public class RateFragment extends Fragment {
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
         toolbar.inflateMenu(R.menu.search_item);
-        searchView = (MaterialSearchView) view.findViewById(R.id.search_view);
-        searchView.setMenuItem(toolbar.getMenu().findItem(R.id.action_search));
-        searchView.setTextColor(getResources().getColor(R.color.colorTextPrimary));
-        searchView.setHintTextColor(getResources().getColor(R.color.colorTextSecondary));
-        searchView.setHint(getResources().getString(R.string.action_search));
-        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                //Do some magic
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.action_search) {
+                    ((MainActivity) getActivity()).showSearch();
+                }
                 return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                //Do some magic
-                return false;
-            }
-        });
-
-        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
-            @Override
-            public void onSearchViewShown() {
-                //Do some magic
-            }
-
-            @Override
-            public void onSearchViewClosed() {
-                //Do some magic
             }
         });
 
@@ -152,24 +130,24 @@ public class RateFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                double times = 1d;
+                double base = 1d;
                 String text = s.toString();
                 try {
-                    times = Double.parseDouble(text.replace(",", ""));
+                    base = Double.parseDouble(text.replace(",", ""));
                     if (!text.contains(".")) {
                         String formatted = String.format(Locale.getDefault(), "%1$,d", (long)
-                                times);
+                                base);
                         if (!formatted.equals(s.toString())) {
 //                            editText.removeTextChangedListener(this);
                             editText.setText(formatted);
-                            times = Double.parseDouble(formatted);
+                            base = Double.parseDouble(formatted);
 //                            editText.addTextChangedListener(this);
                         }
                     }
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 } finally {
-                    adapter.setTimes(times);
+                    adapter.setBase(base);
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -214,13 +192,13 @@ public class RateFragment extends Fragment {
         thread.start();
     }
 
-    public boolean closeSearch() {
-        if (searchView != null && searchView.isSearchOpen()) {
-            searchView.closeSearch();
-            return true;
-        }
-        return false;
-    }
+    //    public boolean closeSearch() {
+//        if (searchView != null && searchView.is) {
+//            searchView.close(true);
+//            return true;
+//        }
+//        return false;
+//    }
 
     void setBaseCurrency() {
         MyCurrency currency = Settings.getBaseCurrency();
@@ -248,8 +226,12 @@ public class RateFragment extends Fragment {
                 case MSG_REFRESH_FINISH:
 //                    Toast.makeText(fragment.getContext(), R.string.error_refresh_success, Toast
 // .LENGTH_SHORT).show();
-                    fragment.setBaseCurrency();
-                    fragment.adapter.notifyDataSetChanged();
+                    try {
+                        fragment.setBaseCurrency();
+                        fragment.adapter.notifyDataSetChanged();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     fragment.swipeRefreshLayout.setRefreshing(false);
                     break;
                 case MSG_REFRESH_FAIL:

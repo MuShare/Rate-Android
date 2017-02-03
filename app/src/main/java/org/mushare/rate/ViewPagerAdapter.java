@@ -37,6 +37,7 @@ class ViewPagerAdapter extends FragmentPagerAdapter {
                     fragments[position] = new MeFragment();
                     break;
             }
+
         return fragments[position];
     }
 
