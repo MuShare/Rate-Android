@@ -9,8 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.mushare.rate.R;
-import org.mushare.rate.data.CurrencyRate;
 import org.mushare.rate.data.MyCurrency;
+import org.mushare.rate.data.MyCurrencyRate;
 
 import java.util.List;
 import java.util.Locale;
@@ -19,11 +19,11 @@ import java.util.Locale;
  * Created by dklap on 12/31/2016.
  */
 class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapter.ViewHolder> {
-    private List<CurrencyRate> mDataset;
+    private List<MyCurrencyRate> mDataset;
     private double base = 1d;
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    RateRecyclerViewAdapter(List<CurrencyRate> myDataset) {
+    RateRecyclerViewAdapter(List<MyCurrencyRate> myDataset) {
         mDataset = myDataset;
     }
 
@@ -47,11 +47,11 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        CurrencyRate currencyRate = mDataset.get(position);
-        MyCurrency myCurrency = currencyRate.getCurrency();
+        MyCurrencyRate myCurrencyRate = mDataset.get(position);
+        MyCurrency myCurrency = myCurrencyRate.getCurrency();
 //        Currency currency = Currency.getInstance(myCurrency.getCode());
         holder.textViewExchangeRate.setText(String.format(Locale.getDefault(), "%1$,.2f", base *
-                currencyRate.getRate()));
+                myCurrencyRate.getRate()));
         holder.textViewCurrencyCode.setText(myCurrency.getCode());
         holder.textViewCurrencyName.setText(myCurrency.getName());
         int resID = holder.getContext().getResources().getIdentifier("ic_flag_" + myCurrency.getIcon(), "drawable", holder.getContext().getPackageName());

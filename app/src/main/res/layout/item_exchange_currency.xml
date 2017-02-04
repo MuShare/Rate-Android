@@ -42,7 +42,8 @@
         android:layout_marginEnd="@dimen/list_horizontal_margin"
         android:layout_marginLeft="@dimen/rate_horizontal_margin"
         android:layout_marginRight="@dimen/list_horizontal_margin"
-        android:layout_marginStart="@dimen/rate_horizontal_margin" />
+        android:layout_marginStart="@dimen/rate_horizontal_margin"
+        android:text="@string/unknown"/>
 
     <TextView
         android:id="@+id/textViewCurrencyCode"

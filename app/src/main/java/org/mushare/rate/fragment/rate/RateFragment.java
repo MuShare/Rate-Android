@@ -1,9 +1,11 @@
 package org.mushare.rate.fragment.rate;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,11 +27,12 @@ import android.widget.Toast;
 
 import org.mushare.rate.MainActivity;
 import org.mushare.rate.R;
-import org.mushare.rate.data.CurrenciesList;
-import org.mushare.rate.data.CurrencyRate;
+import org.mushare.rate.data.CurrencyList;
+import org.mushare.rate.data.CurrencyShowList;
+import org.mushare.rate.data.DBOpenHelper;
 import org.mushare.rate.data.MyCurrency;
+import org.mushare.rate.data.MyCurrencyRate;
 import org.mushare.rate.data.RateList;
-import org.mushare.rate.data.Settings;
 import org.mushare.rate.url.HttpHelper;
 
 import java.lang.ref.WeakReference;
@@ -45,7 +48,7 @@ public class RateFragment extends Fragment {
     final static int MSG_REFRESH_FINISH = 0;
     final static int MSG_REFRESH_FAIL = 1;
 
-    List<CurrencyRate> dataSet = new LinkedList<>();
+    List<MyCurrencyRate> dataSet = new LinkedList<>();
 
     SwipeRefreshLayout swipeRefreshLayout;
     EditText editText;
@@ -54,6 +57,15 @@ public class RateFragment extends Fragment {
     RateRecyclerViewAdapter adapter;
 
     MessageHandler handler = new MessageHandler(new WeakReference<>(this));
+    DBOpenHelper dbOpenHelper;
+    SQLiteDatabase sqLiteDatabase;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        dbOpenHelper = new DBOpenHelper(getContext(), "db", 1);
+        sqLiteDatabase = dbOpenHelper.getReadableDatabase();
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
@@ -181,8 +193,12 @@ public class RateFragment extends Fragment {
         Thread thread = new Thread() {
             @Override
             public void run() {
-                if (HttpHelper.getCurrencyList("", CurrenciesList.getRevision()) == 200 &&
-                        HttpHelper.getCurrencyRates(Settings.getBaseCurrencyCid()) == 200) {
+                if (HttpHelper.getCurrencyList(Locale.getDefault().getLanguage(), CurrencyList
+                        .getRevision()) == 200 && HttpHelper.getCurrencyRates(CurrencyShowList
+                        .getBaseCurrencyCid()) == 200) {
+                    CurrencyList.cache(sqLiteDatabase);
+                    RateList.cache(sqLiteDatabase);
+                    CurrencyShowList.cache(sqLiteDatabase);
                     RateList.getList(dataSet);
                     handler.sendEmptyMessage(MSG_REFRESH_FINISH);
                 } else handler.sendEmptyMessage(MSG_REFRESH_FAIL);
@@ -201,7 +217,7 @@ public class RateFragment extends Fragment {
 //    }
 
     void setBaseCurrency() {
-        MyCurrency currency = Settings.getBaseCurrency();
+        MyCurrency currency = CurrencyShowList.getBaseCurrency();
         if (currency == null) return;
         textViewBaseCurrencyName.setText(currency.getCode());
         textViewBaseCurrencyInfo.setText(currency.getName());
@@ -211,6 +227,13 @@ public class RateFragment extends Fragment {
         if (resID != 0) {
             imageViewBaseCountryFlag.setImageResource(resID);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        dbOpenHelper.close();
+        sqLiteDatabase.close();
+        super.onDestroy();
     }
 
     static class MessageHandler extends Handler {
@@ -251,5 +274,6 @@ public class RateFragment extends Fragment {
             }
         }
     }
+
 }
 

@@ -9,6 +9,7 @@
     <string name="base_currency">Base Currency</string>
     <string name="base_currency_default_number">1.00</string>
     <string name="exchange_currency">Exchange Currency</string>
+    <string name="unknown">-</string>
 
     <string name="error_refresh_fail">Refresh failed</string>
     <string name="error_refresh_success">Refresh succeeded</string>

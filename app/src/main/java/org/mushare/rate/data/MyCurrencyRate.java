@@ -4,11 +4,11 @@ package org.mushare.rate.data;
  * Created by dklap on 1/5/2017.
  */
 
-public class CurrencyRate {
+public class MyCurrencyRate {
     private MyCurrency currency;
     private double rate;
 
-    public CurrencyRate(MyCurrency currency, double rate) {
+    public MyCurrencyRate(MyCurrency currency, double rate) {
         this.currency = currency;
         this.rate = rate;
     }
