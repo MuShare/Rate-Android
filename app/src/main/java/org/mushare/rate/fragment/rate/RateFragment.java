@@ -64,6 +64,7 @@ public class RateFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         dbOpenHelper = new DBOpenHelper(getContext(), "db", 1);
         sqLiteDatabase = dbOpenHelper.getReadableDatabase();
+        EventBus.getDefault().register(this);
         super.onCreate(savedInstanceState);
     }
 
@@ -241,6 +242,7 @@ public class RateFragment extends Fragment {
     public void onDestroy() {
         dbOpenHelper.close();
         sqLiteDatabase.close();
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -252,17 +254,17 @@ public class RateFragment extends Fragment {
         keyboard.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        EventBus.getDefault().register(this);
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        EventBus.getDefault().unregister(this);
+//    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(BaseCurrencyChangedEvent event) {
