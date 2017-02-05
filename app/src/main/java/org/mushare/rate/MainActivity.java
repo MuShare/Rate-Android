@@ -14,8 +14,6 @@ import org.mushare.rate.data.CurrencyShowList;
 import org.mushare.rate.data.DBOpenHelper;
 import org.mushare.rate.data.RateList;
 
-import java.util.Locale;
-
 //import com.roughike.bottombar.BottomBar;
 //import com.roughike.bottombar.OnTabSelectListener;
 
@@ -100,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
         DBOpenHelper dbOpenHelper = new DBOpenHelper(this, "db", 1);
         SQLiteDatabase sqLiteDatabase = dbOpenHelper.getReadableDatabase();
-        CurrencyList.reloadFromCache(sqLiteDatabase, Locale.getDefault().getLanguage());
+        CurrencyList.reloadFromCache(sqLiteDatabase);
         RateList.reloadFromCache(sqLiteDatabase);
         CurrencyShowList.reloadFromCache(sqLiteDatabase);
         sqLiteDatabase.close();

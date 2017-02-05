@@ -5,7 +5,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mushare.rate.data.CurrencyList;
-import org.mushare.rate.data.CurrencyShowList;
 import org.mushare.rate.data.MyCurrency;
 import org.mushare.rate.data.RateList;
 
@@ -29,9 +28,9 @@ public class HttpHelper {
                 JSONObject reader = new JSONObject(stream.toString());
                 JSONObject result = reader.getJSONObject("result");
                 JSONArray currencies = result.getJSONArray("currencies");
-                if (CurrencyShowList.getBaseCurrency() == null && currencies.length() > 0)
-                    CurrencyShowList.setBaseCurrencyCid(currencies.getJSONObject(0).getString
-                            ("cid"));
+//                if (CurrencyShowList.getBaseCurrency() == null && currencies.length() > 0)
+//                    CurrencyShowList.setBaseCurrencyCid(currencies.getJSONObject(0).getString
+//                            ("cid"));
                 for (int i = 0; i < currencies.length(); i++) {
                     JSONObject currency = currencies.getJSONObject(i);
                     CurrencyList.put(currency.getString("cid"), new MyCurrency(currency

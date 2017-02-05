@@ -4,7 +4,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,18 +21,8 @@ public class RateList {
         rateMap.put(cid, rate);
     }
 
-    public synchronized static double get(String cid) {
+    public synchronized static Double get(String cid) {
         return rateMap.get(cid);
-    }
-
-    public synchronized static List<MyCurrencyRate> getList(List<MyCurrencyRate> list) {
-        list.clear();
-        for (String cid : rateMap.keySet()) {
-            MyCurrency currency = CurrencyList.get(cid);
-            if (currency != null)
-                list.add(new MyCurrencyRate(CurrencyList.get(cid), get(cid)));
-        }
-        return list;
     }
 
     public synchronized static void cache(SQLiteDatabase db) {

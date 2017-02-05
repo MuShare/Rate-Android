@@ -6,9 +6,9 @@ package org.mushare.rate.data;
 
 public class MyCurrencyRate {
     private MyCurrency currency;
-    private double rate;
+    private Double rate;
 
-    public MyCurrencyRate(MyCurrency currency, double rate) {
+    public MyCurrencyRate(MyCurrency currency, Double rate) {
         this.currency = currency;
         this.rate = rate;
     }
@@ -17,7 +17,7 @@ public class MyCurrencyRate {
         return currency;
     }
 
-    public double getRate() {
+    public Double getRate() {
         return rate;
     }
 }

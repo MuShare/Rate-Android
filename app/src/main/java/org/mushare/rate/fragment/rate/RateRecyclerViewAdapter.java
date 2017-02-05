@@ -48,13 +48,16 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         MyCurrencyRate myCurrencyRate = mDataset.get(position);
-        MyCurrency myCurrency = myCurrencyRate.getCurrency();
+        Double rate = myCurrencyRate.getRate();
 //        Currency currency = Currency.getInstance(myCurrency.getCode());
-        holder.textViewExchangeRate.setText(String.format(Locale.getDefault(), "%1$,.2f", base *
-                myCurrencyRate.getRate()));
+        if (rate != null)
+            holder.textViewExchangeRate.setText(String.format(Locale.getDefault(), "%1$,.2f",
+                    base * rate));
+        MyCurrency myCurrency = myCurrencyRate.getCurrency();
         holder.textViewCurrencyCode.setText(myCurrency.getCode());
         holder.textViewCurrencyName.setText(myCurrency.getName());
-        int resID = holder.getContext().getResources().getIdentifier("ic_flag_" + myCurrency.getIcon(), "drawable", holder.getContext().getPackageName());
+        int resID = holder.getContext().getResources().getIdentifier("ic_flag_" + myCurrency
+                .getIcon(), "drawable", holder.getContext().getPackageName());
         if (resID != 0) {
             holder.imageViewCountryFlag.setImageResource(resID);
         }

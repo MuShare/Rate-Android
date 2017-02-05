@@ -96,7 +96,7 @@ public class RateFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
-        RateList.getList(dataSet);
+        CurrencyShowList.getExchangeCurrencyRateList(dataSet);
         adapter = new RateRecyclerViewAdapter(dataSet);
         recyclerView.setAdapter(adapter);
 
@@ -193,13 +193,14 @@ public class RateFragment extends Fragment {
         Thread thread = new Thread() {
             @Override
             public void run() {
-                if (HttpHelper.getCurrencyList(Locale.getDefault().getLanguage(), CurrencyList
-                        .getRevision()) == 200 && HttpHelper.getCurrencyRates(CurrencyShowList
-                        .getBaseCurrencyCid()) == 200) {
+                String lan = Locale.getDefault().getLanguage() + "-" + Locale.getDefault()
+                        .getCountry();
+                if (HttpHelper.getCurrencyList(lan, CurrencyList.getRevision(lan)) == 200 &&
+                        HttpHelper.getCurrencyRates(CurrencyShowList.getBaseCurrencyCid()) == 200) {
                     CurrencyList.cache(sqLiteDatabase);
                     RateList.cache(sqLiteDatabase);
-                    CurrencyShowList.cache(sqLiteDatabase);
-                    RateList.getList(dataSet);
+//                    CurrencyShowList.cache(sqLiteDatabase);
+                    CurrencyShowList.getExchangeCurrencyRateList(dataSet);
                     handler.sendEmptyMessage(MSG_REFRESH_FINISH);
                 } else handler.sendEmptyMessage(MSG_REFRESH_FAIL);
             }

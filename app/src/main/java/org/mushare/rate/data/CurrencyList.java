@@ -23,8 +23,9 @@ public class CurrencyList {
         return currencyMap.get(cid);
     }
 
-    public synchronized static int getRevision() {
-        return revision;
+    public synchronized static int getRevision(String lan) {
+        if (lan != null && lan.equals(language)) return revision;
+        else return 0;
     }
 
     public synchronized static void setRevision(int revision) {
@@ -50,10 +51,10 @@ public class CurrencyList {
                 Object[]{revision, language});
     }
 
-    public synchronized static boolean reloadFromCache(SQLiteDatabase db, String lan) {
+    public synchronized static boolean reloadFromCache(SQLiteDatabase db) {
         Cursor cursor = db.rawQuery("select * from currency_list_cache_info", null);
         cursor.moveToNext();
-        if (revision >= cursor.getInt(0) || !lan.equals(cursor.getString(1))) {
+        if (revision >= cursor.getInt(0)) {
             cursor.close();
             return false;
         }

@@ -3,12 +3,16 @@ package org.mushare.rate.data;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by dklap on 1/5/2017.
  */
 
 public class CurrencyShowList {
     private static String baseCurrencyCid;
+    private static List<String> exchangeCurrencyCids = new LinkedList<>();
 
     public synchronized static String getBaseCurrencyCid() {
         return baseCurrencyCid;
@@ -23,8 +27,23 @@ public class CurrencyShowList {
         else return CurrencyList.get(baseCurrencyCid);
     }
 
+    public synchronized static List<MyCurrencyRate> getExchangeCurrencyRateList
+            (List<MyCurrencyRate> list) {
+        list.clear();
+        for (String cid : exchangeCurrencyCids) {
+            MyCurrency currency = CurrencyList.get(cid);
+            if (currency != null)
+                list.add(new MyCurrencyRate(currency, RateList.get(cid)));
+        }
+        return list;
+    }
+
     public synchronized static void cache(SQLiteDatabase db) {
         db.execSQL("update base_currency set cid = ?", new String[]{baseCurrencyCid});
+        db.execSQL("delete from exchange_currencies");
+        for (String cid : exchangeCurrencyCids) {
+            db.execSQL("insert into exchange_currencies values(?)", new String[]{cid});
+        }
     }
 
 
@@ -32,6 +51,12 @@ public class CurrencyShowList {
         Cursor cursor = db.rawQuery("select * from base_currency", null);
         if (cursor.moveToNext()) {
             baseCurrencyCid = cursor.getString(0);
+        }
+        cursor.close();
+        exchangeCurrencyCids.clear();
+        cursor = db.rawQuery("select * from exchange_currencies", null);
+        while (cursor.moveToNext()) {
+            exchangeCurrencyCids.add(cursor.getString(0));
         }
         cursor.close();
     }
