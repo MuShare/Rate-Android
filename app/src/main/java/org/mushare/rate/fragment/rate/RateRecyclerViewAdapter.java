@@ -1,5 +1,7 @@
 package org.mushare.rate.fragment.rate;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,8 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.daimajia.swipe.SwipeLayout;
+
+import org.greenrobot.eventbus.EventBus;
 import org.mushare.rate.R;
+import org.mushare.rate.data.CurrencyShowList;
 import org.mushare.rate.data.MyCurrency;
 import org.mushare.rate.data.MyCurrencyRate;
 
@@ -20,7 +27,7 @@ import java.util.Locale;
  */
 class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapter.ViewHolder> {
     private List<MyCurrencyRate> mDataset;
-    private double base = 1d;
+    private double base = 100;
 
     // Provide a suitable constructor (depends on the kind of dataset)
     RateRecyclerViewAdapter(List<MyCurrencyRate> myDataset) {
@@ -36,15 +43,18 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
     public RateRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                                  int viewType) {
         // create a new view
-        View v = LayoutInflater.from(parent.getContext())
+        SwipeLayout swipeLayout = (SwipeLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_exchange_currency, parent, false);
-//        TextView v = new TextView(parent.getContext());
-        return new ViewHolder(v);
+
+        //set show mode.
+        swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
+
+        return new ViewHolder(swipeLayout);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         MyCurrencyRate myCurrencyRate = mDataset.get(position);
@@ -53,11 +63,15 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
         if (rate != null)
             holder.textViewExchangeRate.setText(String.format(Locale.getDefault(), "%1$,.2f",
                     base * rate));
+        else
+            holder.textViewExchangeRate.setText(holder.textViewExchangeRate.getResources()
+                    .getString(R.string.unknown));
         MyCurrency myCurrency = myCurrencyRate.getCurrency();
         holder.textViewCurrencyCode.setText(myCurrency.getCode());
         holder.textViewCurrencyName.setText(myCurrency.getName());
-        int resID = holder.getContext().getResources().getIdentifier("ic_flag_" + myCurrency
-                .getIcon(), "drawable", holder.getContext().getPackageName());
+        int resID = holder.imageViewCountryFlag.getContext().getResources().getIdentifier
+                ("ic_flag_" + myCurrency.getIcon(), "drawable", holder.imageViewCountryFlag
+                        .getContext().getPackageName());
         if (resID != 0) {
             holder.imageViewCountryFlag.setImageResource(resID);
         }
@@ -85,10 +99,63 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
             textViewCurrencyCode = (TextView) v.findViewById(R.id.textViewCurrencyCode);
             textViewCurrencyName = (TextView) v.findViewById(R.id.textViewCurrencyName);
             imageViewCountryFlag = (ImageView) v.findViewById(R.id.imageViewCountryFlag);
+
+            View viewExchangeCurrency = v.findViewById(R.id.exchangeCurrency);
+            viewExchangeCurrency.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CurrencyShowList.swapBaseCurrencyCid(getAdapterPosition());
+                    EventBus.getDefault().post(new RateFragment.BaseCurrencyChangedEvent());
+                }
+            });
+            viewExchangeCurrency.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    String rate = textViewExchangeRate.getText().toString().replace(",", "");
+                    if (!rate.equals("-")) {
+                        ClipboardManager clipboard = (ClipboardManager) v.getContext()
+                                .getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText(rate, rate);
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(v.getContext(), v.getResources().getString(R.string
+                                .info_copy_success), Toast.LENGTH_LONG).show();
+                    }
+                    return true;
+                }
+            });
+            ((SwipeLayout) v).addSwipeListener(new SwipeLayout.SwipeListener() {
+                @Override
+                public void onClose(SwipeLayout layout) {
+                    //when the SurfaceView totally cover the BottomView.
+                }
+
+                @Override
+                public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
+                    //you are swiping.
+                }
+
+                @Override
+                public void onStartOpen(SwipeLayout layout) {
+
+                }
+
+                @Override
+                public void onOpen(SwipeLayout layout) {
+                    //when the BottomView totally show.
+                    layout.close();
+                }
+
+                @Override
+                public void onStartClose(SwipeLayout layout) {
+
+                }
+
+                @Override
+                public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
+                    //when user's hand released.
+                }
+            });
         }
 
-        Context getContext() {
-            return itemView.getContext();
-        }
     }
 }

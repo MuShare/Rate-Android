@@ -15,6 +15,7 @@
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/colorBackground"
             android:overScrollMode="never"/>
 
         <!--<com.roughike.bottombar.BottomBar-->

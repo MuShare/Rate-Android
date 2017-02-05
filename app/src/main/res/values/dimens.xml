@@ -1,11 +1,12 @@
 <resources>
+    <dimen name="swipe_button_margin">8dp</dimen>
     <dimen name="search_bar_horizontal_margin">4dp</dimen>
     <dimen name="bottom_navigation_bar_height">56dp</dimen>
     <dimen name="list_horizontal_margin">16dp</dimen>
     <dimen name="list_vertical_margin">8dp</dimen>
     <dimen name="rate_horizontal_margin">8dp</dimen>
-    <dimen name="flag_width">42dp</dimen>
-    <dimen name="flag_height">28dp</dimen>
+    <!--<dimen name="flag_width">42dp</dimen>-->
+    <!--<dimen name="flag_height">28dp</dimen>-->
     <dimen name="flag_horizontal_margin">8dp</dimen>
     <dimen name="flag_corner">4dp</dimen>
 </resources>

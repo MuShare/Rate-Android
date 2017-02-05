@@ -4,10 +4,11 @@
     <color name="colorPrimaryDark">#009688</color>
     <color name="colorAccent">#009688</color>
 
+    <color name="colorBackground">#f9f9f9</color>
     <color name="colorToolbarBackground">#00bfa5</color>
     <color name="colorToolbarText">#ffffff</color>
     <color name="colorTextPrimary">#8a000000</color>
     <color name="colorTextSecondary">#60000000</color>
 
-    <color name="colorBottomNavigationBackground">#E6FFFFFF</color>
+    <color name="colorBottomNavigationBackground">#e6f9f9f9</color>
 </resources>

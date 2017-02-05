@@ -7,10 +7,11 @@
     <string name="tab_me">Me</string>
 
     <string name="base_currency">Base Currency</string>
-    <string name="base_currency_default_number">1.00</string>
+    <string name="base_currency_default_number">100</string>
     <string name="exchange_currency">Exchange Currency</string>
     <string name="unknown">-</string>
 
+    <string name="info_copy_success">Copied to clipboard</string>
     <string name="error_refresh_fail">Refresh failed</string>
     <string name="error_refresh_success">Refresh succeeded</string>
     <string name="snackbar_action">Retry</string>

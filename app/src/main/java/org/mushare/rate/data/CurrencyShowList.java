@@ -3,7 +3,7 @@ package org.mushare.rate.data;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,7 +12,7 @@ import java.util.List;
 
 public class CurrencyShowList {
     private static String baseCurrencyCid;
-    private static List<String> exchangeCurrencyCids = new LinkedList<>();
+    private static List<String> exchangeCurrencyCids = new ArrayList<>();
 
     public synchronized static String getBaseCurrencyCid() {
         return baseCurrencyCid;
@@ -25,6 +25,13 @@ public class CurrencyShowList {
     public synchronized static MyCurrency getBaseCurrency() {
         if (baseCurrencyCid == null) return null;
         else return CurrencyList.get(baseCurrencyCid);
+    }
+
+    public synchronized static boolean swapBaseCurrencyCid(int index) {
+        if (exchangeCurrencyCids.size() > index) {
+            baseCurrencyCid = exchangeCurrencyCids.set(index, baseCurrencyCid);
+            return true;
+        } else return false;
     }
 
     public synchronized static List<MyCurrencyRate> getExchangeCurrencyRateList

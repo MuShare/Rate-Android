@@ -1,75 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.daimajia.swipe.SwipeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/exchangeCurrency"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
-    android:paddingBottom="@dimen/list_vertical_margin"
-    android:paddingTop="@dimen/list_vertical_margin"
     tools:ignore="ContentDescription">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/cardViewCountryFlag"
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="@dimen/flag_horizontal_margin"
-        android:layout_marginLeft="@dimen/list_horizontal_margin"
-        android:layout_marginRight="@dimen/flag_horizontal_margin"
-        android:layout_marginStart="@dimen/list_horizontal_margin"
-        app:cardCornerRadius="@dimen/flag_corner"
-        app:cardPreventCornerOverlap="false">
+        android:layout_gravity="end"
+        android:background="@color/colorToolbarBackground">
 
         <ImageView
-            android:id="@+id/imageViewCountryFlag"
-            android:layout_width="@dimen/flag_width"
-            android:layout_height="@dimen/flag_height"
-            android:scaleType="fitXY" />
-    </android.support.v7.widget.CardView>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginLeft="@dimen/swipe_button_margin"
+            app:srcCompat="@drawable/ic_currency_timeline"/>
+    </FrameLayout>
 
-    <TextView
-        android:id="@+id/textViewExchangeRate"
-        style="@style/AppTheme.TextAppearanceNormal"
-        android:layout_width="wrap_content"
+
+    <RelativeLayout
+        android:id="@+id/exchangeCurrency"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="@dimen/list_horizontal_margin"
-        android:layout_marginLeft="@dimen/rate_horizontal_margin"
-        android:layout_marginRight="@dimen/list_horizontal_margin"
-        android:layout_marginStart="@dimen/rate_horizontal_margin"
-        android:text="@string/unknown"/>
+        android:background="?selectableItemBackground"
+        android:clickable="true"
+        android:paddingBottom="@dimen/list_vertical_margin"
+        android:paddingTop="@dimen/list_vertical_margin">
 
-    <TextView
-        android:id="@+id/textViewCurrencyCode"
-        style="@style/AppTheme.TextAppearanceSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/cardViewCountryFlag"
-        android:layout_toLeftOf="@+id/textViewExchangeRate"
-        android:layout_toRightOf="@+id/cardViewCountryFlag"
-        android:layout_toStartOf="@+id/textViewExchangeRate"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:textAllCaps="true" />
+        <android.support.v7.widget.CardView
+            android:id="@+id/cardViewCountryFlag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/flag_horizontal_margin"
+            android:layout_marginLeft="@dimen/list_horizontal_margin"
+            android:layout_marginRight="@dimen/flag_horizontal_margin"
+            android:layout_marginStart="@dimen/list_horizontal_margin"
+            app:cardCornerRadius="@dimen/flag_corner"
+            app:cardPreventCornerOverlap="false">
 
-    <TextView
-        android:id="@+id/textViewCurrencyName"
-        style="@style/AppTheme.TextAppearanceTiny"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewCurrencyCode"
-        android:layout_toEndOf="@+id/cardViewCountryFlag"
-        android:layout_toLeftOf="@+id/textViewExchangeRate"
-        android:layout_toRightOf="@+id/cardViewCountryFlag"
-        android:layout_toStartOf="@+id/textViewExchangeRate"
-        android:ellipsize="end"
-        android:singleLine="true" />
+            <ImageView
+                android:id="@+id/imageViewCountryFlag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </android.support.v7.widget.CardView>
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/textViewExchangeRate"
+            style="@style/AppTheme.TextAppearanceNormal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/list_horizontal_margin"
+            android:layout_marginLeft="@dimen/rate_horizontal_margin"
+            android:layout_marginRight="@dimen/list_horizontal_margin"
+            android:layout_marginStart="@dimen/rate_horizontal_margin"
+            android:text="@string/unknown"/>
+
+        <TextView
+            android:id="@+id/textViewCurrencyCode"
+            style="@style/AppTheme.TextAppearanceSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/cardViewCountryFlag"
+            android:layout_toLeftOf="@+id/textViewExchangeRate"
+            android:layout_toRightOf="@+id/cardViewCountryFlag"
+            android:layout_toStartOf="@+id/textViewExchangeRate"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textAllCaps="true"/>
+
+        <TextView
+            android:id="@+id/textViewCurrencyName"
+            style="@style/AppTheme.TextAppearanceTiny"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textViewCurrencyCode"
+            android:layout_toEndOf="@+id/cardViewCountryFlag"
+            android:layout_toLeftOf="@+id/textViewExchangeRate"
+            android:layout_toRightOf="@+id/cardViewCountryFlag"
+            android:layout_toStartOf="@+id/textViewExchangeRate"
+            android:ellipsize="end"
+            android:singleLine="true"/>
+
+    </RelativeLayout>
+</com.daimajia.swipe.SwipeLayout>

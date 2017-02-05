@@ -30,7 +30,7 @@ public class MyFloatingSearchView extends FloatingSearchView {
     public void setVisibility(int visibility) {
         visible = (visibility == VISIBLE);
         if (visible) setAlpha(1);
-        else animate().alpha(0).setDuration(200);
+        else animate().alpha(0).setDuration(200).withLayer();
     }
 
     @Override

@@ -3,8 +3,6 @@ package org.mushare.rate.fragment.rate;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,11 +11,14 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -25,6 +26,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.mushare.rate.MainActivity;
 import org.mushare.rate.R;
 import org.mushare.rate.data.CurrencyList;
@@ -35,7 +39,6 @@ import org.mushare.rate.data.MyCurrencyRate;
 import org.mushare.rate.data.RateList;
 import org.mushare.rate.url.HttpHelper;
 
-import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -45,18 +48,15 @@ import java.util.Locale;
  */
 
 public class RateFragment extends Fragment {
-    final static int MSG_REFRESH_FINISH = 0;
-    final static int MSG_REFRESH_FAIL = 1;
-
     List<MyCurrencyRate> dataSet = new LinkedList<>();
 
     SwipeRefreshLayout swipeRefreshLayout;
     EditText editText;
+    View viewBaseCurrency;
     TextView textViewBaseCurrencyName, textViewBaseCurrencyInfo;
     ImageView imageViewBaseCountryFlag;
     RateRecyclerViewAdapter adapter;
 
-    MessageHandler handler = new MessageHandler(new WeakReference<>(this));
     DBOpenHelper dbOpenHelper;
     SQLiteDatabase sqLiteDatabase;
 
@@ -142,7 +142,7 @@ public class RateFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                double base = 1d;
+                double base = 100;
                 String text = s.toString();
                 try {
                     base = Double.parseDouble(text.replace(",", ""));
@@ -164,9 +164,8 @@ public class RateFragment extends Fragment {
                 }
             }
         });
-        setBaseCurrency();
 
-        View viewBaseCurrency = view.findViewById(R.id.baseCurrency);
+        viewBaseCurrency = view.findViewById(R.id.baseCurrency);
         viewBaseCurrency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,8 +175,11 @@ public class RateFragment extends Fragment {
             }
         });
 
+        setBaseCurrency();
+
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorBackground);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -201,21 +203,13 @@ public class RateFragment extends Fragment {
                     RateList.cache(sqLiteDatabase);
 //                    CurrencyShowList.cache(sqLiteDatabase);
                     CurrencyShowList.getExchangeCurrencyRateList(dataSet);
-                    handler.sendEmptyMessage(MSG_REFRESH_FINISH);
-                } else handler.sendEmptyMessage(MSG_REFRESH_FAIL);
+                    EventBus.getDefault().post(new RefreshFinishEvent());
+                } else EventBus.getDefault().post(new RefreshFailEvent());
             }
         };
         thread.setDaemon(true);
         thread.start();
     }
-
-    //    public boolean closeSearch() {
-//        if (searchView != null && searchView.is) {
-//            searchView.close(true);
-//            return true;
-//        }
-//        return false;
-//    }
 
     void setBaseCurrency() {
         MyCurrency currency = CurrencyShowList.getBaseCurrency();
@@ -230,6 +224,19 @@ public class RateFragment extends Fragment {
         }
     }
 
+    void startBaseCurrencyViewAnimation() {
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, -8, getResources()
+                .getDisplayMetrics());
+        viewBaseCurrency.animate().translationY(px).setDuration(60).setInterpolator(new
+                DecelerateInterpolator()).withLayer().withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                viewBaseCurrency.animate().translationY(0).setDuration(300).setInterpolator(new
+                        OvershootInterpolator()).withLayer();
+            }
+        });
+    }
+
     @Override
     public void onDestroy() {
         dbOpenHelper.close();
@@ -237,44 +244,59 @@ public class RateFragment extends Fragment {
         super.onDestroy();
     }
 
-    static class MessageHandler extends Handler {
-        RateFragment fragment;
-
-        MessageHandler(WeakReference<RateFragment> weakReference) {
-            fragment = weakReference.get();
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MSG_REFRESH_FINISH:
-//                    Toast.makeText(fragment.getContext(), R.string.error_refresh_success, Toast
-// .LENGTH_SHORT).show();
-                    try {
-                        fragment.setBaseCurrency();
-                        fragment.adapter.notifyDataSetChanged();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    fragment.swipeRefreshLayout.setRefreshing(false);
-                    break;
-                case MSG_REFRESH_FAIL:
-//                    Snackbar.make(fragment.swipeRefreshLayout, R.string.error_refresh_fail,
-//                            Snackbar.LENGTH_LONG).setAction(R.string.snackbar_action, new View
-//                            .OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            fragment.swipeRefreshLayout.setRefreshing(true);
-//                            fragment.refresh();
-//                        }
-//                    }).show();
-                    Toast.makeText(fragment.getContext(), R.string.error_refresh_fail, Toast
-                            .LENGTH_SHORT).show();
-                    fragment.swipeRefreshLayout.setRefreshing(false);
-                    break;
-            }
-        }
+    @Override
+    public void onPause() {
+        super.onPause();
+        InputMethodManager keyboard = (InputMethodManager) getContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        keyboard.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(BaseCurrencyChangedEvent event) {
+        CurrencyShowList.cache(sqLiteDatabase);
+        RateList.clear();
+        CurrencyShowList.getExchangeCurrencyRateList(dataSet);
+        setBaseCurrency();
+        startBaseCurrencyViewAnimation();
+        adapter.notifyDataSetChanged();
+        swipeRefreshLayout.setRefreshing(true);
+        refresh();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(RefreshFinishEvent event) {
+        setBaseCurrency();
+        adapter.notifyDataSetChanged();
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(RefreshFailEvent event) {
+        Toast.makeText(getContext(), R.string.error_refresh_fail, Toast
+                .LENGTH_SHORT).show();
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+    public static class BaseCurrencyChangedEvent {
+    }
+
+    public static class RefreshFinishEvent {
+    }
+
+    public static class RefreshFailEvent {
+    }
 }
 
