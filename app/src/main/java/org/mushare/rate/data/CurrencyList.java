@@ -41,11 +41,17 @@ public class CurrencyList {
     }
 
     public synchronized static void cache(SQLiteDatabase db) {
-        db.execSQL("delete from currencies");
+        Cursor cursor = db.rawQuery("select * from currency_list_cache_info", null);
+        cursor.moveToNext();
+        if (revision < cursor.getInt(0) || (revision == cursor.getInt(0) && language.equals(cursor
+                .getString(1)))) {
+            cursor.close();
+            return;
+        }
         for (Map.Entry<String, MyCurrency> entry : currencyMap.entrySet()) {
             MyCurrency currency = entry.getValue();
-            db.execSQL("insert into currencies values(?, ?, ?, ?)", new String[]{entry.getKey(),
-                    currency.getCode(), currency.getIcon(), currency.getName()});
+            db.execSQL("insert or replace into currencies values(?, ?, ?, ?)", new String[]{entry
+                    .getKey(), currency.getCode(), currency.getIcon(), currency.getName()});
         }
         db.execSQL("update currency_list_cache_info set rev = ?, language = ?", new
                 Object[]{revision, language});

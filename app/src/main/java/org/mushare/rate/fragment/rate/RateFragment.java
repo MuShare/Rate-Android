@@ -1,9 +1,7 @@
 package org.mushare.rate.fragment.rate;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,7 +31,6 @@ import org.mushare.rate.MainActivity;
 import org.mushare.rate.R;
 import org.mushare.rate.data.CurrencyList;
 import org.mushare.rate.data.CurrencyShowList;
-import org.mushare.rate.data.DBOpenHelper;
 import org.mushare.rate.data.MyCurrency;
 import org.mushare.rate.data.MyCurrencyRate;
 import org.mushare.rate.data.RateList;
@@ -56,17 +53,6 @@ public class RateFragment extends Fragment {
     TextView textViewBaseCurrencyName, textViewBaseCurrencyInfo;
     ImageView imageViewBaseCountryFlag;
     RateRecyclerViewAdapter adapter;
-
-    DBOpenHelper dbOpenHelper;
-    SQLiteDatabase sqLiteDatabase;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        dbOpenHelper = new DBOpenHelper(getContext(), "db", 1);
-        sqLiteDatabase = dbOpenHelper.getReadableDatabase();
-        EventBus.getDefault().register(this);
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
@@ -187,8 +173,6 @@ public class RateFragment extends Fragment {
                 refresh();
             }
         });
-        swipeRefreshLayout.setRefreshing(true);
-        refresh();
         return view;
     }
 
@@ -200,9 +184,6 @@ public class RateFragment extends Fragment {
                         .getCountry();
                 if (HttpHelper.getCurrencyList(lan, CurrencyList.getRevision(lan)) == 200 &&
                         HttpHelper.getCurrencyRates(CurrencyShowList.getBaseCurrencyCid()) == 200) {
-                    CurrencyList.cache(sqLiteDatabase);
-                    RateList.cache(sqLiteDatabase);
-//                    CurrencyShowList.cache(sqLiteDatabase);
                     CurrencyShowList.getExchangeCurrencyRateList(dataSet);
                     EventBus.getDefault().post(new RefreshFinishEvent());
                 } else EventBus.getDefault().post(new RefreshFailEvent());
@@ -239,14 +220,6 @@ public class RateFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        dbOpenHelper.close();
-        sqLiteDatabase.close();
-        EventBus.getDefault().unregister(this);
-        super.onDestroy();
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         InputMethodManager keyboard = (InputMethodManager) getContext()
@@ -254,21 +227,22 @@ public class RateFragment extends Fragment {
         keyboard.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        EventBus.getDefault().register(this);
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        EventBus.getDefault().unregister(this);
-//    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+        swipeRefreshLayout.setRefreshing(true);
+        refresh();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(BaseCurrencyChangedEvent event) {
-        CurrencyShowList.cache(sqLiteDatabase);
         RateList.clear();
         CurrencyShowList.getExchangeCurrencyRateList(dataSet);
         setBaseCurrency();

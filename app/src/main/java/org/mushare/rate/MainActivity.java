@@ -95,7 +95,10 @@ public class MainActivity extends AppCompatActivity {
                 searchView.setSearchText("");
             }
         });
+    }
 
+    @Override
+    protected void onStart() {
         DBOpenHelper dbOpenHelper = new DBOpenHelper(this, "db", 1);
         SQLiteDatabase sqLiteDatabase = dbOpenHelper.getReadableDatabase();
         CurrencyList.reloadFromCache(sqLiteDatabase);
@@ -103,6 +106,19 @@ public class MainActivity extends AppCompatActivity {
         CurrencyShowList.reloadFromCache(sqLiteDatabase);
         sqLiteDatabase.close();
         dbOpenHelper.close();
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        DBOpenHelper dbOpenHelper = new DBOpenHelper(this, "db", 1);
+        SQLiteDatabase sqLiteDatabase = dbOpenHelper.getReadableDatabase();
+        CurrencyList.cache(sqLiteDatabase);
+        RateList.cache(sqLiteDatabase);
+        CurrencyShowList.cache(sqLiteDatabase);
+        sqLiteDatabase.close();
+        dbOpenHelper.close();
+        super.onStop();
     }
 
     public void showSearch() {
