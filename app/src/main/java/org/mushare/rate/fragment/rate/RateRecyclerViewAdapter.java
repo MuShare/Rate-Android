@@ -108,7 +108,7 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
                     EventBus.getDefault().post(new RateFragment.BaseCurrencyChangedEvent());
                 }
             });
-            viewExchangeCurrency.setOnLongClickListener(new View.OnLongClickListener() {
+            textViewExchangeRate.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     String rate = textViewExchangeRate.getText().toString().replace(",", "");

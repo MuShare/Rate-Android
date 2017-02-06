@@ -53,7 +53,7 @@ public class RateFragment extends Fragment {
     TextView textViewBaseCurrencyName, textViewBaseCurrencyInfo;
     ImageView imageViewBaseCountryFlag;
     RateRecyclerViewAdapter adapter;
-
+    RateRecyclerView recyclerView;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
             savedInstanceState) {
@@ -72,7 +72,7 @@ public class RateFragment extends Fragment {
             }
         });
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        recyclerView = (RateRecyclerView) view.findViewById(R.id.recyclerView);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -177,6 +177,7 @@ public class RateFragment extends Fragment {
     }
 
     void refresh() {
+        recyclerView.setTouchEnabled(false);
         Thread thread = new Thread() {
             @Override
             public void run() {
@@ -257,6 +258,7 @@ public class RateFragment extends Fragment {
         setBaseCurrency();
         adapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
+        recyclerView.setTouchEnabled(true);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -264,6 +266,7 @@ public class RateFragment extends Fragment {
         Toast.makeText(getContext(), R.string.error_refresh_fail, Toast
                 .LENGTH_SHORT).show();
         swipeRefreshLayout.setRefreshing(false);
+        recyclerView.setTouchEnabled(true);
     }
 
     public static class BaseCurrencyChangedEvent {
