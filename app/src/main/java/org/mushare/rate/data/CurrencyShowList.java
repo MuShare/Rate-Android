@@ -13,6 +13,15 @@ import java.util.List;
 public class CurrencyShowList {
     private static String baseCurrencyCid;
     private static List<String> exchangeCurrencyCids = new ArrayList<>();
+    private static boolean needRefresh = true;
+
+    public static boolean isNeedRefresh() {
+        return needRefresh;
+    }
+
+    public static void setNeedRefresh(boolean needRefresh) {
+        CurrencyShowList.needRefresh = needRefresh;
+    }
 
     public synchronized static String getBaseCurrencyCid() {
         return baseCurrencyCid;
@@ -27,8 +36,14 @@ public class CurrencyShowList {
         else return CurrencyList.get(baseCurrencyCid);
     }
 
+    public synchronized static String getExchangeCurrencyCid(int index) {
+        if (exchangeCurrencyCids.size() > index && index > -1) {
+            return exchangeCurrencyCids.get(index);
+        } else return null;
+    }
+
     public synchronized static boolean swapBaseCurrencyCid(int index) {
-        if (exchangeCurrencyCids.size() > index) {
+        if (exchangeCurrencyCids.size() > index && index > -1) {
             baseCurrencyCid = exchangeCurrencyCids.set(index, baseCurrencyCid);
             return true;
         } else return false;

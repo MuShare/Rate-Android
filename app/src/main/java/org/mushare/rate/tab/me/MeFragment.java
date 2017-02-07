@@ -1,4 +1,4 @@
-package org.mushare.rate.fragment.me;
+package org.mushare.rate.tab.me;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

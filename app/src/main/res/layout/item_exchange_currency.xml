@@ -1,25 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.daimajia.swipe.SwipeLayout
+<org.mushare.rate.tab.rate.MySwipeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:ignore="ContentDescription">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:background="@color/colorToolbarBackground">
+        android:background="@color/colorToolbarBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="start|center_vertical"
-            android:layout_marginLeft="@dimen/swipe_button_margin"
+            android:layout_margin="@dimen/swipe_button_margin"
             app:srcCompat="@drawable/ic_currency_timeline"/>
-    </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/action_timeline"
+            android:textAllCaps="true"
+            android:textColor="@color/colorSwipeActionText"/>
+    </LinearLayout>
 
 
     <RelativeLayout
@@ -93,4 +102,4 @@
             android:singleLine="true"/>
 
     </RelativeLayout>
-</com.daimajia.swipe.SwipeLayout>
+</org.mushare.rate.tab.rate.MySwipeLayout>

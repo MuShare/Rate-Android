@@ -1,4 +1,4 @@
-package org.mushare.rate.fragment.rate;
+package org.mushare.rate.tab.rate;
 
 import android.annotation.TargetApi;
 import android.content.Context;

@@ -9,6 +9,7 @@
     <color name="colorToolbarText">#ffffff</color>
     <color name="colorTextPrimary">#8a000000</color>
     <color name="colorTextSecondary">#60000000</color>
+    <color name="colorSwipeActionText">#ffffff</color>
 
     <color name="colorBottomNavigationBackground">#e6f9f9f9</color>
 </resources>

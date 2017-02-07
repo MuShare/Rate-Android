@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.mushare.rate.fragment.rate.BaseCurrencyLayout
+<org.mushare.rate.tab.rate.BaseCurrencyLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"/>
     </android.support.v7.widget.CardView>
 
-    <org.mushare.rate.fragment.rate.BaseCurrencyEditText
+    <org.mushare.rate.tab.rate.BaseCurrencyEditText
         android:id="@+id/editTextBase"
         style="@style/AppTheme.TextAppearanceNormal"
         android:layout_width="wrap_content"
@@ -80,4 +80,4 @@
         android:ellipsize="end"
         android:singleLine="true"/>
 
-</org.mushare.rate.fragment.rate.BaseCurrencyLayout>
+</org.mushare.rate.tab.rate.BaseCurrencyLayout>

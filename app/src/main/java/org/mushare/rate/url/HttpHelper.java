@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mushare.rate.data.CurrencyList;
 import org.mushare.rate.data.MyCurrency;
+import org.mushare.rate.data.RateHistory;
 import org.mushare.rate.data.RateList;
 
 import java.util.Iterator;
@@ -104,6 +105,31 @@ public class HttpHelper {
                     String cid = keys.next();
                     RateList.put(cid, rates.getDouble(cid));
                 }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return responseCode;
+    }
+
+    static public int getRateHistory(String from, String to, Long startTime, Long endTime,
+                                     RateHistory rateHistoryResult) {
+        StringBuilder stream = new StringBuilder();
+        int responseCode = HttpDataHandler.sendGet(host + "api/rate/history", "from=" +
+                from + "&to=" + to + "&start" + startTime + "&end" + endTime, stream);
+
+        if (responseCode == 200) {
+            try {
+                rateHistoryResult.clear();
+                JSONObject reader = new JSONObject(stream.toString());
+                JSONObject result = reader.getJSONObject("result");
+                JSONArray rates = result.getJSONArray("data");
+                for (int i = 0; i < rates.length(); i++) {
+                    rateHistoryResult.addData(rates.getDouble(i));
+                }
+                rateHistoryResult.setTime(result.getLong("time"));
+                rateHistoryResult.setCurrencyPair(result.getString("inCurrency"), result
+                        .getString("outCurrency"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -1,4 +1,4 @@
-package org.mushare.rate.fragment.rate;
+package org.mushare.rate.tab.rate;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -11,7 +11,7 @@ import android.view.MotionEvent;
  */
 
 public class RateRecyclerView extends RecyclerView {
-    boolean touchEnabled;
+    boolean touchEnabled = true;
 
     public RateRecyclerView(Context context) {
         super(context);
@@ -27,8 +27,8 @@ public class RateRecyclerView extends RecyclerView {
 
     public void setTouchEnabled(boolean touchEnabled) {
         this.touchEnabled = touchEnabled;
-        if (touchEnabled) animate().alpha(1).setDuration(300).withLayer();
-        else animate().alpha(0.4f).setDuration(300).withLayer();
+//        if (touchEnabled) animate().alpha(1).setDuration(300).withLayer();
+//        else animate().alpha(0.6f).setDuration(200).withLayer();
     }
 
     @Override

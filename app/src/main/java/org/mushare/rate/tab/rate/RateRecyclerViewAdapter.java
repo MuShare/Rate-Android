@@ -1,10 +1,11 @@
-package org.mushare.rate.fragment.rate;
+package org.mushare.rate.tab.rate;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.swipe.SwipeLayout;
+import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.mushare.rate.R;
@@ -25,17 +27,34 @@ import java.util.Locale;
 /**
  * Created by dklap on 12/31/2016.
  */
-class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapter.ViewHolder> {
+class RateRecyclerViewAdapter extends RecyclerSwipeAdapter<RateRecyclerViewAdapter.ViewHolder> {
     private List<MyCurrencyRate> mDataset;
     private double base = 100;
 
     // Provide a suitable constructor (depends on the kind of dataset)
     RateRecyclerViewAdapter(List<MyCurrencyRate> myDataset) {
         mDataset = myDataset;
+//        mItemManger = new SwipeItemRecyclerMangerImpl(this) {
+//            @Override
+//            public void closeAllItems() {
+//                if (getMode() == Attributes.Mode.Multiple) {
+//                    mOpenPositions.clear();
+//                } else {
+//                    mOpenPosition = INVALID_POSITION;
+//                }
+//                for (SwipeLayout s : mShownLayouts) {
+//                    s.close();
+//                }
+//            }
+//        };
     }
 
     void setBase(double base) {
         this.base = base;
+    }
+
+    public void closeAllItems() {
+        mItemManger.closeAllItems();
     }
 
     // Create new views (invoked by the layout manager)
@@ -43,12 +62,31 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
     public RateRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                                  int viewType) {
         // create a new view
-        SwipeLayout swipeLayout = (SwipeLayout) LayoutInflater.from(parent.getContext())
+        MySwipeLayout swipeLayout = (MySwipeLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_exchange_currency, parent, false);
 
         //set show mode.
         swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
-
+        swipeLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (!((MySwipeLayout) v).isTouchEnabled()) return true;
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_MOVE:
+                        for (SwipeLayout s : mItemManger.getOpenLayouts()) {
+                            if (s != v)
+                                ((MySwipeLayout) s).setTouchEnabled(false);
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        for (SwipeLayout s : mItemManger.getOpenLayouts()) {
+                            ((MySwipeLayout) s).setTouchEnabled(true);
+                        }
+                        break;
+                }
+                return false;
+            }
+        });
         return new ViewHolder(swipeLayout);
     }
 
@@ -75,12 +113,18 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
         if (resID != 0) {
             holder.imageViewCountryFlag.setImageResource(resID);
         }
+        mItemManger.bindView(holder.itemView, position);
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mDataset.size();
+    }
+
+    @Override
+    public int getSwipeLayoutResourceId(int position) {
+        return R.id.swipeLayout;
     }
 
     // Provide a reference to the views for each data item
@@ -104,8 +148,8 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
             viewExchangeCurrency.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    CurrencyShowList.swapBaseCurrencyCid(getAdapterPosition());
-                    EventBus.getDefault().post(new RateFragment.BaseCurrencyChangedEvent());
+                    if (CurrencyShowList.swapBaseCurrencyCid(getAdapterPosition()))
+                        EventBus.getDefault().post(new RateFragment.BaseCurrencyChangedEvent());
                 }
             });
             textViewExchangeRate.setOnLongClickListener(new View.OnLongClickListener() {
@@ -142,7 +186,8 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
                 @Override
                 public void onOpen(SwipeLayout layout) {
                     //when the BottomView totally show.
-                    layout.close();
+                    EventBus.getDefault().post(new RateFragment.LaunchHistoryActivity
+                            (getAdapterPosition()));
                 }
 
                 @Override

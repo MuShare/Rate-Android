@@ -4,10 +4,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import org.mushare.rate.fragment.me.MeFragment;
-import org.mushare.rate.fragment.news.NewsFragment;
-import org.mushare.rate.fragment.rate.RateFragment;
-import org.mushare.rate.fragment.subscribe.SubscribeFragment;
+import org.mushare.rate.tab.me.MeFragment;
+import org.mushare.rate.tab.news.NewsFragment;
+import org.mushare.rate.tab.rate.RateFragment;
+import org.mushare.rate.tab.subscribe.SubscribeFragment;
 
 /**
  * Created by dklap on 12/16/2016.

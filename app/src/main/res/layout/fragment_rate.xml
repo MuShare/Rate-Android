@@ -63,7 +63,7 @@
             android:layout_height="match_parent">
 
             <!-- A RecyclerView with some commonly used attributes -->
-            <org.mushare.rate.fragment.rate.RateRecyclerView
+            <org.mushare.rate.tab.rate.RateRecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

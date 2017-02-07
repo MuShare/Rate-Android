@@ -1,6 +1,7 @@
-package org.mushare.rate.fragment.rate;
+package org.mushare.rate.tab.rate;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -54,6 +55,7 @@ public class RateFragment extends Fragment {
     ImageView imageViewBaseCountryFlag;
     RateRecyclerViewAdapter adapter;
     RateRecyclerView recyclerView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
             savedInstanceState) {
@@ -83,7 +85,6 @@ public class RateFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
-        CurrencyShowList.getExchangeCurrencyRateList(dataSet);
         adapter = new RateRecyclerViewAdapter(dataSet);
         recyclerView.setAdapter(adapter);
 
@@ -162,8 +163,6 @@ public class RateFragment extends Fragment {
             }
         });
 
-        setBaseCurrency();
-
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
         swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorBackground);
@@ -173,10 +172,17 @@ public class RateFragment extends Fragment {
                 refresh();
             }
         });
+
+        setBaseCurrency();
+        CurrencyShowList.getExchangeCurrencyRateList(dataSet);
+        adapter.notifyDataSetChanged();
+        
         return view;
     }
 
     void refresh() {
+        CurrencyShowList.setNeedRefresh(true);
+        swipeRefreshLayout.setRefreshing(true);
         recyclerView.setTouchEnabled(false);
         Thread thread = new Thread() {
             @Override
@@ -232,8 +238,10 @@ public class RateFragment extends Fragment {
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-        swipeRefreshLayout.setRefreshing(true);
-        refresh();
+
+        if (CurrencyShowList.isNeedRefresh()) {
+            refresh();
+        }
     }
 
     @Override
@@ -249,7 +257,7 @@ public class RateFragment extends Fragment {
         setBaseCurrency();
         startBaseCurrencyViewAnimation();
         adapter.notifyDataSetChanged();
-        swipeRefreshLayout.setRefreshing(true);
+
         refresh();
     }
 
@@ -259,6 +267,7 @@ public class RateFragment extends Fragment {
         adapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
         recyclerView.setTouchEnabled(true);
+        CurrencyShowList.setNeedRefresh(false);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -267,6 +276,25 @@ public class RateFragment extends Fragment {
                 .LENGTH_SHORT).show();
         swipeRefreshLayout.setRefreshing(false);
         recyclerView.setTouchEnabled(true);
+        CurrencyShowList.setNeedRefresh(false);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(LaunchHistoryActivity event) {
+        Intent intent = new Intent(getContext(), RateHistoryActivity.class);
+        intent.putExtra("in_currency", CurrencyShowList.getBaseCurrencyCid());
+        intent.putExtra("out_currency", CurrencyShowList.getExchangeCurrencyCid
+                (event.getIndex()));
+        startActivityForResult(intent, 0);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == 0) {
+            // Make sure the request was successful
+            adapter.closeAllItems();
+        }
     }
 
     public static class BaseCurrencyChangedEvent {
@@ -276,6 +304,18 @@ public class RateFragment extends Fragment {
     }
 
     public static class RefreshFailEvent {
+    }
+
+    public static class LaunchHistoryActivity {
+        int index;
+
+        public LaunchHistoryActivity(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
+        }
     }
 }
 

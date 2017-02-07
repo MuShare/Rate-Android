@@ -5,6 +5,10 @@
         <!--<item name="android:windowTranslucentNavigation">true</item>-->
         <!--<item name="android:navigationBarColor">@color/colorNavigationBar</item>-->
         <!--<item name="android:statusBarColor">@color/colorPrimaryDark</item>-->
+        <item name="android:statusBarColor">@color/colorToolbarBackground</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar" parent="AppTheme.NoActionBarBase">
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 </resources>
