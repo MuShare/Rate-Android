@@ -1,10 +1,10 @@
 package org.mushare.rate.tab.rate;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -25,10 +25,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.swipe.SwipeLayout;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.mushare.rate.MainActivity;
 import org.mushare.rate.R;
 import org.mushare.rate.data.CurrencyList;
 import org.mushare.rate.data.CurrencyShowList;
@@ -37,9 +38,13 @@ import org.mushare.rate.data.MyCurrencyRate;
 import org.mushare.rate.data.RateList;
 import org.mushare.rate.url.HttpHelper;
 
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+
+//import android.text.format.DateFormat;
 
 /**
  * Created by dklap on 12/16/2016.
@@ -55,24 +60,15 @@ public class RateFragment extends Fragment {
     ImageView imageViewBaseCountryFlag;
     RateRecyclerViewAdapter adapter;
     RateRecyclerView recyclerView;
+    Toolbar toolbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
             savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rate, container, false);
 
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
-        toolbar.inflateMenu(R.menu.search_item);
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getItemId() == R.id.action_search) {
-                    ((MainActivity) getActivity()).showSearch();
-                }
-                return false;
-            }
-        });
 
         recyclerView = (RateRecyclerView) view.findViewById(R.id.recyclerView);
 
@@ -83,7 +79,11 @@ public class RateFragment extends Fragment {
         // use a linear layout manager
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(layoutManager);
-
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView
+                .getContext(),
+                DividerItemDecoration.VERTICAL);
+        dividerItemDecoration.setDrawable(getResources().getDrawable(R.drawable.list_divider));
+        recyclerView.addItemDecoration(dividerItemDecoration);
         // specify an adapter (see also next example)
         adapter = new RateRecyclerViewAdapter(dataSet);
         recyclerView.setAdapter(adapter);
@@ -165,7 +165,7 @@ public class RateFragment extends Fragment {
 
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
-        swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorBackground);
+//        swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorBackground);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -173,10 +173,28 @@ public class RateFragment extends Fragment {
             }
         });
 
+        toolbar.inflateMenu(R.menu.refresh_item);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.action_refresh) {
+                    refresh();
+                }
+                return false;
+            }
+        });
+
         setBaseCurrency();
         CurrencyShowList.getExchangeCurrencyRateList(dataSet);
         adapter.notifyDataSetChanged();
-        
+
+//        toolbar.setSubtitle(getResources().getString(R.string.update_time_prefix) + DateFormat
+// .getDateTimeInstance().format(new Date()));
+
+        if (RateList.getUpdateTime() != 0)
+            toolbar.setSubtitle(getResources().getString(R.string.update_time_prefix) +
+                    DateFormat.getDateTimeInstance().format(new Date(RateList.getUpdateTime())));
+
         return view;
     }
 
@@ -191,6 +209,7 @@ public class RateFragment extends Fragment {
                         .getCountry();
                 if (HttpHelper.getCurrencyList(lan, CurrencyList.getRevision(lan)) == 200 &&
                         HttpHelper.getCurrencyRates(CurrencyShowList.getBaseCurrencyCid()) == 200) {
+                    RateList.setUpdateTime(System.currentTimeMillis());
                     CurrencyShowList.getExchangeCurrencyRateList(dataSet);
                     EventBus.getDefault().post(new RefreshFinishEvent());
                 } else EventBus.getDefault().post(new RefreshFailEvent());
@@ -228,17 +247,19 @@ public class RateFragment extends Fragment {
 
     @Override
     public void onPause() {
-        super.onPause();
         InputMethodManager keyboard = (InputMethodManager) getContext()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         keyboard.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+        super.onPause();
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        for (SwipeLayout s : adapter.mItemManger.getOpenLayouts()) {
+            ((MySwipeLayout) s).setTouchEnabled(true);
+        }
         EventBus.getDefault().register(this);
-
         if (CurrencyShowList.isNeedRefresh()) {
             refresh();
         }
@@ -246,8 +267,8 @@ public class RateFragment extends Fragment {
 
     @Override
     public void onStop() {
-        super.onStop();
         EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -265,6 +286,8 @@ public class RateFragment extends Fragment {
     public void onMessageEvent(RefreshFinishEvent event) {
         setBaseCurrency();
         adapter.notifyDataSetChanged();
+        toolbar.setSubtitle(getResources().getString(R.string.update_time_prefix) + DateFormat
+                .getDateTimeInstance().format(new Date(RateList.getUpdateTime())));
         swipeRefreshLayout.setRefreshing(false);
         recyclerView.setTouchEnabled(true);
         CurrencyShowList.setNeedRefresh(false);
@@ -281,21 +304,23 @@ public class RateFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(LaunchHistoryActivity event) {
-        Intent intent = new Intent(getContext(), RateHistoryActivity.class);
-        intent.putExtra("in_currency", CurrencyShowList.getBaseCurrencyCid());
-        intent.putExtra("out_currency", CurrencyShowList.getExchangeCurrencyCid
-                (event.getIndex()));
-        startActivityForResult(intent, 0);
+//        Intent intent = new Intent(getContext(), RateHistoryActivity.class);
+//        intent.putExtra("in_currency", CurrencyShowList.getBaseCurrencyCid());
+//        intent.putExtra("out_currency", CurrencyShowList.getExchangeCurrencyCid
+//                (event.getIndex()));
+//        startActivityForResult(intent, 0);
+        getFragmentManager().beginTransaction().replace(R.id.main_container, new
+                RateHistoryFragment()).addToBackStack(null).commit();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Check which request we're responding to
-        if (requestCode == 0) {
-            // Make sure the request was successful
-            adapter.closeAllItems();
-        }
-    }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        // Check which request we're responding to
+//        if (requestCode == 0) {
+//            // Make sure the request was successful
+//            adapter.closeAllItems();
+//        }
+//    }
 
     public static class BaseCurrencyChangedEvent {
     }

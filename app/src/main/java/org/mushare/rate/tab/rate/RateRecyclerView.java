@@ -31,6 +31,11 @@ public class RateRecyclerView extends RecyclerView {
 //        else animate().alpha(0.6f).setDuration(200).withLayer();
     }
 
+//    @Override
+//    public boolean onTouchEvent(MotionEvent ev) {
+//        return touchEnabled && super.onTouchEvent(ev);
+//    }
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent e) {
         return !touchEnabled || super.onInterceptTouchEvent(e);

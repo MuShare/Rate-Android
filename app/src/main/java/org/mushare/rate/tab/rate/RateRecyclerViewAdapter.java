@@ -167,37 +167,11 @@ class RateRecyclerViewAdapter extends RecyclerSwipeAdapter<RateRecyclerViewAdapt
                     return true;
                 }
             });
-            ((SwipeLayout) v).addSwipeListener(new SwipeLayout.SwipeListener() {
+            ((MySwipeLayout) v).setOnOpenByUserListener(new MySwipeLayout.OpenByUserListener() {
                 @Override
-                public void onClose(SwipeLayout layout) {
-                    //when the SurfaceView totally cover the BottomView.
-                }
-
-                @Override
-                public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
-                    //you are swiping.
-                }
-
-                @Override
-                public void onStartOpen(SwipeLayout layout) {
-
-                }
-
-                @Override
-                public void onOpen(SwipeLayout layout) {
-                    //when the BottomView totally show.
+                public void onOpenByUser() {
                     EventBus.getDefault().post(new RateFragment.LaunchHistoryActivity
                             (getAdapterPosition()));
-                }
-
-                @Override
-                public void onStartClose(SwipeLayout layout) {
-
-                }
-
-                @Override
-                public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
-                    //when user's hand released.
                 }
             });
         }

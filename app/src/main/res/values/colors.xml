@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#009688</color>
-    <color name="colorPrimaryDark">#009688</color>
+    <!--<color name="colorPrimary">#00897b</color>-->
+    <!--<color name="colorPrimaryDark">#00897b</color>-->
     <color name="colorAccent">#009688</color>
 
+    <!--<color name="colorListTitleBackground">#ffff</color>-->
     <color name="colorBackground">#f9f9f9</color>
+    <color name="colorListDivider">#e0e0e0</color>
     <color name="colorToolbarBackground">#00bfa5</color>
     <color name="colorToolbarText">#ffffff</color>
-    <color name="colorTextPrimary">#8a000000</color>
-    <color name="colorTextSecondary">#60000000</color>
+    <color name="colorTextPrimary">#98000000</color>
+    <color name="colorTextSecondary">#65000000</color>
     <color name="colorSwipeActionText">#ffffff</color>
 
     <color name="colorBottomNavigationBackground">#e6f9f9f9</color>

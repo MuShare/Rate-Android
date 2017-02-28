@@ -12,9 +12,19 @@ import java.util.Map;
 
 public class RateList {
     private static Map<String, Double> rateMap = new HashMap<>();
+    private static long updateTime = 0;
+
+    public synchronized static long getUpdateTime() {
+        return updateTime;
+    }
+
+    public synchronized static void setUpdateTime(long updateTime) {
+        RateList.updateTime = updateTime;
+    }
 
     public synchronized static void clear() {
         rateMap.clear();
+        updateTime = 0;
     }
 
     public synchronized static void put(String cid, double rate) {
@@ -31,6 +41,7 @@ public class RateList {
             db.execSQL("insert into rates values(?, ?)", new Object[]{entry.getKey(),
                     entry.getValue()});
         }
+        db.execSQL("update rate_list_cache_info set time = ?", new Long[]{updateTime});
     }
 
     public synchronized static void reloadFromCache(SQLiteDatabase db) {
@@ -39,6 +50,10 @@ public class RateList {
         while (cursor.moveToNext()) {
             rateMap.put(cursor.getString(0), cursor.getDouble(1));
         }
+        cursor.close();
+        cursor = db.rawQuery("select * from rate_list_cache_info", null);
+        if (cursor.moveToNext())
+            updateTime = cursor.getLong(0);
         cursor.close();
     }
 }

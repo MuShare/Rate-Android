@@ -2,18 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/tab_rate"
-        android:icon="@drawable/ic_tab_rate"
+        android:icon="@drawable/ic_tab_conversion"
         android:title="@string/tab_rate"/>
     <item
         android:id="@+id/tab_subscribe"
-        android:icon="@drawable/ic_tab_subscribe"
+        android:icon="@drawable/ic_tab_reminder"
         android:title="@string/tab_subscribe"/>
     <item
         android:id="@+id/tab_news"
         android:icon="@drawable/ic_tab_news"
         android:title="@string/tab_news"/>
-    <item
-        android:id="@+id/tab_me"
-        android:icon="@drawable/ic_tab_me"
-        android:title="@string/tab_me"/>
 </menu>

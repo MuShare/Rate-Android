@@ -2,8 +2,8 @@
 
     <!-- Base application theme. -->
     <style name="AppThemeBase" parent="Theme.AppCompat.Light">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <!--<item name="colorPrimary">@color/colorPrimary</item>-->
+        <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
@@ -22,20 +22,23 @@
     </style>
 
     <style name="AppTheme.ListTitle">
-        <item name="textAllCaps">true</item>
+        <!--<item name="textAllCaps">true</item>-->
         <item name="android:textColor">@color/colorAccent</item>
-        <item name="android:layout_marginLeft">@dimen/list_horizontal_margin</item>
-        <item name="android:layout_marginRight">@dimen/list_horizontal_margin</item>
-        <item name="android:layout_marginBottom">@dimen/list_vertical_margin</item>
-        <item name="android:layout_marginTop">@dimen/list_vertical_margin</item>
+        <item name="android:paddingLeft">@dimen/list_title_horizontal_margin</item>
+        <item name="android:paddingRight">@dimen/list_title_horizontal_margin</item>
+        <item name="android:paddingBottom">@dimen/list_title_vertical_margin</item>
+        <item name="android:paddingTop">@dimen/list_title_vertical_margin</item>
+        <!--<item name="android:background">@color/colorListTitleBackground</item>-->
     </style>
 
     <style name="AppTheme.Divider">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/divider_height</item>
-        <item name="android:layout_marginLeft">@dimen/divider_horizontal_margin</item>
-        <item name="android:layout_marginRight">@dimen/divider_horizontal_margin</item>
-        <item name="android:background">?android:attr/listDivider</item>
+        <item name="android:layout_height">1px</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
+        <!--<item name="android:layout_marginLeft">@dimen/divider_horizontal_margin</item>-->
+        <!--<item name="android:layout_marginRight">@dimen/divider_horizontal_margin</item>-->
+        <item name="android:background">@color/colorListDivider</item>
     </style>
 
     <style name="AppTheme.TextAppearanceNormal">

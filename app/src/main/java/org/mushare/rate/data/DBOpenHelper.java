@@ -21,6 +21,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         db.execSQL("create table base_currency(cid)");
         db.execSQL("create table exchange_currencies(cid)");
         db.execSQL("create table currency_list_cache_info(rev, language)");
+        db.execSQL("create table rate_list_cache_info(time)");
         db.execSQL("insert into currencies values('ff80818156b14e160156b1542a9f2ec3', 'BGN', " +
                 "'bg', 'Bulgarian Lev'), ('ff80818156b14e160156b155edb95d86', 'NZD', 'nu', 'New " +
                 "Zealand Dollar'), ('ff808181568824b701568825c7680000', 'USD', 'us', 'US Dollar')" +
@@ -63,6 +64,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
                 "('ff80818156b14e160156b156119562b8'), ('ff80818156b14e160156b156569667ec'), " +
                 "('ff80818156b14e160156b1566fe96d1e'), ('ff80818156b14e160156b1568f547250'), " +
                 "('ff80818156b169360156b16a60d8052f'), ('ff80818156b14e160156b15386ec1f2d')");
+        db.execSQL("insert into rate_list_cache_info values(?)", new Long[]{0L});
     }
 
     @Override

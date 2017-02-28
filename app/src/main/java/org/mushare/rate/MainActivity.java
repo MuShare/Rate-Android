@@ -4,59 +4,46 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.view.ViewPager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
 
 import org.mushare.rate.data.CurrencyList;
 import org.mushare.rate.data.CurrencyShowList;
 import org.mushare.rate.data.DBOpenHelper;
 import org.mushare.rate.data.RateList;
-
-//import com.roughike.bottombar.BottomBar;
-//import com.roughike.bottombar.OnTabSelectListener;
+import org.mushare.rate.tab.news.NewsFragment;
+import org.mushare.rate.tab.rate.RateFragment;
+import org.mushare.rate.tab.subscribe.SubscribeFragment;
 
 
 public class MainActivity extends AppCompatActivity {
-    private ViewPager viewPager;
-    private MyFloatingSearchView searchView;
+    //    private ViewPager viewPager;
 
+    private Fragment fragment;
+    private FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+//        getWindow().getDecorView().setSystemUiVisibility(
+//                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
-        viewPager = (NoSwipeViewPager) findViewById(R.id.viewPager);
+//        View statusBarCover = findViewById(R.id.status_bar_cover);
+//        ViewGroup.LayoutParams layoutParams = statusBarCover.getLayoutParams();
+//        layoutParams.height = getStatusBarHeight();
+//        statusBarCover.setLayoutParams(layoutParams);
 
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(viewPagerAdapter);
+        fragmentManager = getSupportFragmentManager();
+        fragment = new RateFragment();
+        final FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.main_container, fragment).commit();
 
-//        BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
-//        bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
-//            @Override
-//            public void onTabSelected(@IdRes int tabId) {
-//                switch (tabId) {
-//                    case R.id.tab_rate:
-//                        viewPager.setCurrentItem(0, false);
-//                        break;
-//                    case R.id.tab_subscribe:
-//                        viewPager.setCurrentItem(1, false);
-//                        break;
-//                    case R.id.tab_news:
-//                        viewPager.setCurrentItem(2, false);
-//                        break;
-//                    case R.id.tab_me:
-//                        viewPager.setCurrentItem(3, false);
-//                        break;
-//                }
-//            }
-//        });
         BottomNavigationView bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation);
 
@@ -66,36 +53,32 @@ public class MainActivity extends AppCompatActivity {
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.tab_rate:
-                                viewPager.setCurrentItem(0, false);
+                                fragment = new RateFragment();
                                 break;
                             case R.id.tab_subscribe:
-                                viewPager.setCurrentItem(1, false);
+                                fragment = new SubscribeFragment();
                                 break;
                             case R.id.tab_news:
-                                viewPager.setCurrentItem(2, false);
-                                break;
-                            case R.id.tab_me:
-                                viewPager.setCurrentItem(3, false);
+                                fragment = new NewsFragment();
                                 break;
                         }
+                        fragmentManager.popBackStack(null, FragmentManager
+                                .POP_BACK_STACK_INCLUSIVE);
+                        final FragmentTransaction transaction = fragmentManager.beginTransaction();
+                        transaction.replace(R.id.main_container, fragment).commit();
                         return true;
                     }
                 });
-
-        searchView = (MyFloatingSearchView) findViewById(R.id.floating_search_view);
-        searchView.setOnFocusChangeListener(new MyFloatingSearchView.OnFocusChangeListener() {
-            @Override
-            public void onFocus() {
-
-            }
-
-            @Override
-            public void onFocusCleared() {
-                searchView.setVisibility(View.GONE);
-                searchView.setSearchText("");
-            }
-        });
     }
+
+//    public int getStatusBarHeight() {
+//        int result = 0;
+//        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+//        if (resourceId > 0) {
+//            result = getResources().getDimensionPixelSize(resourceId);
+//        }
+//        return result;
+//    }
 
     @Override
     protected void onStart() {
@@ -119,20 +102,5 @@ public class MainActivity extends AppCompatActivity {
         sqLiteDatabase.close();
         dbOpenHelper.close();
         super.onStop();
-    }
-
-    public void showSearch() {
-        if (searchView != null) {
-            searchView.setVisibility(View.VISIBLE);
-            searchView.setSearchFocused(true);
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (searchView != null && searchView.setSearchFocused(false)) {
-            return;
-        }
-        super.onBackPressed();
     }
 }

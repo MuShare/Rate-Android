@@ -8,7 +8,7 @@
         <item name="android:statusBarColor">@color/colorToolbarBackground</item>
     </style>
 
-    <style name="AppTheme.NoActionBar" parent="AppTheme.NoActionBarBase">
-        <item name="android:statusBarColor">@android:color/transparent</item>
-    </style>
+    <!--<style name="AppTheme.NoActionBar" parent="AppTheme.NoActionBarBase">-->
+    <!--<item name="android:statusBarColor">@android:color/transparent</item>-->
+    <!--</style>-->
 </resources>
