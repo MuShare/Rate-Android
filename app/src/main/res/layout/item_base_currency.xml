@@ -65,7 +65,8 @@
         android:layout_toStartOf="@+id/editTextBase"
         android:ellipsize="end"
         android:singleLine="true"
-        android:textAllCaps="true"/>
+        android:textAllCaps="true"
+        android:typeface="monospace"/>
 
     <TextView
         android:id="@+id/textViewBaseCurrencyName"

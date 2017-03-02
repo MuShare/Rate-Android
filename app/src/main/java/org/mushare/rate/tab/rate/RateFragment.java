@@ -309,8 +309,13 @@ public class RateFragment extends Fragment {
 //        intent.putExtra("out_currency", CurrencyShowList.getExchangeCurrencyCid
 //                (event.getIndex()));
 //        startActivityForResult(intent, 0);
-        getFragmentManager().beginTransaction().replace(R.id.main_container, new
-                RateHistoryFragment()).addToBackStack(null).commit();
+        RateHistoryFragment fragment = new RateHistoryFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("cid1", CurrencyShowList.getBaseCurrencyCid());
+        bundle.putString("cid2", CurrencyShowList.getExchangeCurrencyCid(event.getIndex()));
+        fragment.setArguments(bundle);
+        getFragmentManager().beginTransaction().replace(R.id.main_container, fragment)
+                .addToBackStack(null).commit();
     }
 
 //    @Override

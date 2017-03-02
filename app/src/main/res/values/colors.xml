@@ -14,4 +14,7 @@
     <color name="colorSwipeActionText">#ffffff</color>
 
     <color name="colorBottomNavigationBackground">#e6f9f9f9</color>
+
+    <color name="colorChartLine">#00bfa5</color>
+    <color name="colorChartHighLightLine">#65000000</color>
 </resources>

@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_add_reminder"
+        android:icon="@drawable/ic_action_alarm_add"
+        android:orderInCategory="100"
+        android:title="@string/action_add_reminder"
+        app:showAsAction="ifRoom|collapseActionView"/>
+</menu>

@@ -47,7 +47,10 @@
 
                 <include layout="@layout/item_base_currency"/>
 
-                <View style="@style/AppTheme.Divider"/>
+                <View
+                    style="@style/AppTheme.Divider"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"/>
 
                 <TextView
                     style="@style/AppTheme.ListTitle"

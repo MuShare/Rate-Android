@@ -116,8 +116,8 @@ public class HttpHelper {
                                      RateHistory rateHistoryResult) {
         StringBuilder stream = new StringBuilder();
         int responseCode = HttpDataHandler.sendGet(host + "api/rate/history", "from=" +
-                from + "&to=" + to + "&start" + startTime + "&end" + endTime, stream);
-
+                from + "&to=" + to + "&start=" + startTime + "&end=" + endTime, stream);
+//        Log.i("c", stream.toString());
         if (responseCode == 200) {
             try {
                 rateHistoryResult.clear();

@@ -35,9 +35,9 @@
         android:id="@+id/exchangeCurrency"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?selectableItemBackground"
         android:clickable="true"
         android:clipToPadding="false"
+        android:foreground="?selectableItemBackground"
         android:paddingBottom="@dimen/list_vertical_margin"
         android:paddingLeft="@dimen/list_horizontal_margin"
         android:paddingRight="@dimen/list_horizontal_margin"
@@ -86,7 +86,8 @@
             android:layout_toStartOf="@+id/textViewExchangeRate"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textAllCaps="true"/>
+            android:textAllCaps="true"
+            android:typeface="monospace"/>
 
         <TextView
             android:id="@+id/textViewCurrencyName"

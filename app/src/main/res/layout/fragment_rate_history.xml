@@ -20,9 +20,13 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <include layout="@layout/item_currency_pair"/>
+
+    <View style="@style/AppTheme.Divider"/>
+
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/bottom_navigation_bar_height"/>
+        android:layout_marginBottom="@dimen/history_chart_bottom_margin"/>
 </LinearLayout>
