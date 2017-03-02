@@ -13,7 +13,7 @@
     <dimen name="flag_horizontal_margin">10dp</dimen>
     <dimen name="flag_corner">3dp</dimen>
     <dimen name="history_flag_horizontal_margin">16dp</dimen>
-    <dimen name="history_equal_sign_horizontal_margin">24dp</dimen>
+    <dimen name="history_equal_sign_horizontal_margin">32dp</dimen>
     <dimen name="history_currency_pair_vertical_margin">24dp</dimen>
     <dimen name="history_chart_bottom_margin">64dp</dimen>
     <dimen name="history_chart_horizontal_margin">8dp</dimen>

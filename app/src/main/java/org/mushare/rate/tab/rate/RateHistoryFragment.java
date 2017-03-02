@@ -1,5 +1,6 @@
 package org.mushare.rate.tab.rate;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +55,7 @@ public class RateHistoryFragment extends Fragment {
     private TextView currencyCode;
     private LineChart chart;
     private MyMarkerView mv;
+    private View pair;
 
     private RateHistory rateHistory = new RateHistory();
 
@@ -89,6 +93,9 @@ public class RateHistoryFragment extends Fragment {
 
         chart.setDragEnabled(true);
         chart.setScaleEnabled(false);
+        chart.setNoDataText(getString(R.string.chart_no_data));
+        chart.setNoDataTextColor(getResources().getColor(R.color.colorTextPrimary));
+
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setLabelCount(4);
@@ -168,13 +175,29 @@ public class RateHistoryFragment extends Fragment {
         setCurrencyPair();
         requestHistoryData();
 
-        View pair = view.findViewById(R.id.currency_pair);
+        pair = view.findViewById(R.id.currency_pair);
         pair.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                pair.animate().rotationY(15).setDuration(60).setInterpolator(new
+                        DecelerateInterpolator()).withLayer().withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        pair.animate().rotationY(0).setDuration(300).setInterpolator(new
+                                OvershootInterpolator()).withLayer();
+                    }
+                });
+                pair.setClickable(false);
                 swap = !swap;
                 setCurrencyPair();
+                chart.clear();
                 requestHistoryData();
+            }
+        });
+        pair.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                return true;
             }
         });
 
@@ -261,22 +284,25 @@ public class RateHistoryFragment extends Fragment {
         dataSet.setColor(getResources().getColor(R.color.colorChartLine));
         dataSet.setDrawHorizontalHighlightIndicator(false);
         dataSet.setHighlightLineWidth(1.5f);
-        dataSet.enableDashedHighlightLine(10, 8, 1);
+        dataSet.enableDashedHighlightLine(10, 8, 0);
         dataSet.setHighLightColor(getResources().getColor(R.color.colorChartHighLightLine));
         dataSet.setDrawValues(false);
         dataSet.setDrawFilled(true);
-        dataSet.setFillColor(getResources().getColor(R.color.colorAccent));
+        dataSet.setFillColor(Color.GRAY);
         dataSet.setFillAlpha(10);
 
 //        dataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
         LineData lineData = new LineData(dataSet);
         chart.setData(lineData);
+        chart.animateX(600);
         mv.setStartTime(rateHistory.getTime());
         chart.invalidate();
+        pair.setClickable(true);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(RefreshFailEvent event) {
+        pair.setClickable(true);
         Toast.makeText(getContext(), R.string.error_refresh_fail, Toast
                 .LENGTH_SHORT).show();
     }

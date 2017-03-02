@@ -7,6 +7,7 @@
     <string name="tab_me">Me</string>
 
     <string name="timeline">Timeline</string>
+    <string name="chart_no_data">Wait a moment…</string>
 
     <string name="base_currency">Base Currency</string>
     <string name="base_currency_default_number">100</string>
