@@ -22,14 +22,16 @@ import java.util.Calendar;
 public class MyMarkerView extends MarkerView {
     private TextView tvContent;
     private long startTime;
+    private int timeOffset;
 
     public MyMarkerView(Context context, int layoutResource) {
         super(context, layoutResource);
         tvContent = (TextView) findViewById(R.id.tvContent);
     }
 
-    public void setStartTime(long startTime) {
+    public void setStartTime(long startTime, int timeOffset) {
         this.startTime = startTime;
+        this.timeOffset = timeOffset;
     }
 
     // callbacks everytime the MarkerView is redrawn, can be used to update the
@@ -38,7 +40,7 @@ public class MyMarkerView extends MarkerView {
     public void refreshContent(Entry e, Highlight highlight) {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(startTime);
-        cal.add(Calendar.DATE, (int) e.getX());
+        cal.add(Calendar.DATE, (int) e.getX() + timeOffset);
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(e.getY() < 0.001 ? 6 : 3);
         tvContent.setText(DateFormat.getDateInstance().format(cal.getTime()) + "\n" + df.format(e

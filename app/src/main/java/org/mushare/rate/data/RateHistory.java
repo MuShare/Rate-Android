@@ -1,6 +1,6 @@
 package org.mushare.rate.data;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,7 +8,7 @@ import java.util.List;
  */
 
 public class RateHistory {
-    private List<Double> data = new LinkedList<>();
+    private List<Double> data = new ArrayList<>();
     private long time;
     private String inCurrency;
     private String outCurrency;

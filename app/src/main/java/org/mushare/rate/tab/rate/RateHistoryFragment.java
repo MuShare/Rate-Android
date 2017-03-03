@@ -7,7 +7,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
@@ -23,7 +22,6 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-import com.github.mikephil.charting.highlight.Highlight;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -58,7 +56,7 @@ public class RateHistoryFragment extends Fragment {
     private MyTabLayout tabLayout;
 
     private RateHistory rateHistory = new RateHistory();
-    private Highlight lastHighlighted;
+    private int timeOffset;
 
     @Nullable
     @Override
@@ -91,26 +89,22 @@ public class RateHistoryFragment extends Fragment {
                 int size = rateHistory.getData().size();
                 switch (tab.getPosition()) {
                     case 0:
-                        chart.setVisibleXRange(30, 30);
-                        chart.moveViewToX(size - 30);
+                        timeOffset = size - 30;
                         break;
                     case 1:
-                        chart.setVisibleXRange(90, 90);
-                        chart.moveViewToX(size - 90);
+                        timeOffset = size - 90;
                         break;
                     case 2:
-                        chart.setVisibleXRange(180, 180);
-                        chart.moveViewToX(size - 180);
+                        timeOffset = size - 180;
                         break;
                     case 3:
-                        chart.setVisibleXRange(365, 365);
-                        chart.moveViewToX(size - 365);
+                        timeOffset = size - 365;
                         break;
                     case 4:
-                        chart.setVisibleXRange(size, size);
-                        chart.moveViewToX(0);
+                        timeOffset = 0;
                         break;
                 }
+                refreshDataSet();
             }
 
             @Override
@@ -132,7 +126,7 @@ public class RateHistoryFragment extends Fragment {
         mv.setChartView(chart); // For bounds control
         chart.setMarker(mv); // Set the marker to the chart
 
-        chart.setDragEnabled(false);
+//        chart.setDragEnabled(false);
         chart.setScaleEnabled(false);
 //        chart.setScaleYEnabled(false);
         chart.setNoDataText(getString(R.string.chart_no_data));
@@ -140,7 +134,7 @@ public class RateHistoryFragment extends Fragment {
 
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setLabelCount(3, true);
+        xAxis.setLabelCount(3);
         xAxis.setGranularity(1);
 //        xAxis.setCenterAxisLabels(true);
         xAxis.setAvoidFirstLastClipping(true);
@@ -152,7 +146,7 @@ public class RateHistoryFragment extends Fragment {
             public String getFormattedValue(float value, AxisBase axis) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(rateHistory.getTime());
-                cal.add(Calendar.DATE, (int) value);
+                cal.add(Calendar.DATE, (int) value + timeOffset);
                 return DateFormat.getDateInstance().format(cal.getTime());
             }
         });
@@ -160,31 +154,14 @@ public class RateHistoryFragment extends Fragment {
         YAxis yAxis = chart.getAxisLeft();
         yAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
         yAxis.setTextColor(getResources().getColor(R.color.colorTextPrimary));
+        yAxis.setSpaceTop(15);
+        yAxis.setSpaceBottom(15);
 //        yAxis.setAxisMinimum(0);
         chart.getAxisRight().setEnabled(false);
         chart.getDescription().setEnabled(false);
         chart.getLegend().setEnabled(false);
 
 //        chart.setAutoScaleMinMaxEnabled(true);
-        chart.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_MOVE:
-                    case MotionEvent.ACTION_DOWN:
-                        Highlight h = chart.getHighlightByTouchPoint(event.getX(), event.getY());
-                        if (h != null && !h.equalTo(lastHighlighted)) {
-                            lastHighlighted = h;
-                            chart.highlightValue(h, false);
-                        }
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        chart.highlightValues(null);
-                        break;
-                }
-                return true;
-            }
-        });
         Bundle bundle = getArguments();
         cid1 = bundle.getString("cid1");
         cid2 = bundle.getString("cid2");
@@ -197,6 +174,10 @@ public class RateHistoryFragment extends Fragment {
         pair.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                pair.setClickable(false);
+                tabLayout.setTouchEnabled(false);
+                swap = !swap;
+                setCurrencyPair();
                 pair.animate().rotationY(15).setDuration(60).setInterpolator(new
                         DecelerateInterpolator()).withLayer().withEndAction(new Runnable() {
                     @Override
@@ -205,10 +186,6 @@ public class RateHistoryFragment extends Fragment {
                                 OvershootInterpolator()).withLayer();
                     }
                 });
-                pair.setClickable(false);
-                tabLayout.setTouchEnabled(false);
-                swap = !swap;
-                setCurrencyPair();
                 chart.setNoDataText(getString(R.string.chart_no_data));
                 chart.clear();
                 requestHistoryData();
@@ -284,39 +261,81 @@ public class RateHistoryFragment extends Fragment {
         super.onStop();
     }
 
+    void refreshDataSet() {
+        List<Entry> entries = new ArrayList<>();
+        List<Double> rates = rateHistory.getData();
+        for (int i = timeOffset; i < rates.size(); i++) {
+            entries.add(new Entry(i - timeOffset, rates.get(i).floatValue()));
+        }
+        LineDataSet dataSet;
+        if (chart.getData() != null &&
+                chart.getData().getDataSetCount() > 0) {
+            dataSet = (LineDataSet) chart.getData().getDataSetByIndex(0);
+            dataSet.setValues(entries);
+            chart.getData().notifyDataChanged();
+            chart.notifyDataSetChanged();
+        } else {
+            dataSet = new LineDataSet(entries, "rates"); // add entries to dataset
+            dataSet.setDrawCircles(false);
+            dataSet.setLineWidth(1f);
+            dataSet.setColor(getResources().getColor(R.color.colorChartLine));
+            dataSet.setDrawHorizontalHighlightIndicator(false);
+            dataSet.setHighlightLineWidth(1);
+            dataSet.enableDashedHighlightLine(10, 8, 0);
+            dataSet.setHighLightColor(getResources().getColor(R.color.colorChartHighLightLine));
+            dataSet.setDrawValues(false);
+            dataSet.setDrawFilled(true);
+            dataSet.setFillColor(Color.GRAY);
+            dataSet.setFillAlpha(10);
+            LineData lineData = new LineData(dataSet);
+            chart.setData(lineData);
+        }
+        mv.setStartTime(rateHistory.getTime(), timeOffset);
+        chart.highlightValues(null);
+        chart.invalidate();
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(RefreshFinishEvent event) {
-//        Calendar cal = Calendar.getInstance();
-//        cal.setTimeInMillis(rateHistory.getTime());
-//        Toast.makeText(getContext(), rateHistory.getData().size() + ", " + cal.get(Calendar.DATE)
-//                + "/" + (cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.YEAR), Toast
-//                .LENGTH_LONG).show();
-        List<Entry> entries = new ArrayList<>();
-        int i = 0;
-        List<Double> rates = rateHistory.getData();
-        for (double data : rates) {
-            // turn your data into Entry objects
-            entries.add(new Entry(i++, (float) data));
+        int size = rateHistory.getData().size();
+        switch (tabLayout.getSelectedTabPosition()) {
+            case 0:
+                timeOffset = size - 30;
+                break;
+            case 1:
+                timeOffset = size - 90;
+                break;
+            case 2:
+                timeOffset = size - 180;
+                break;
+            case 3:
+                timeOffset = size - 365;
+                break;
+            case 4:
+                timeOffset = 0;
+                break;
         }
-        LineDataSet dataSet = new LineDataSet(entries, "rates"); // add entries to dataset
-        dataSet.setDrawCircles(false);
-        dataSet.setLineWidth(1f);
-        dataSet.setColor(getResources().getColor(R.color.colorChartLine));
-        dataSet.setDrawHorizontalHighlightIndicator(false);
-        dataSet.setHighlightLineWidth(1);
-        dataSet.enableDashedHighlightLine(10, 8, 0);
-        dataSet.setHighLightColor(getResources().getColor(R.color.colorChartHighLightLine));
-        dataSet.setDrawValues(false);
-        dataSet.setDrawFilled(true);
-        dataSet.setFillColor(Color.GRAY);
-        dataSet.setFillAlpha(10);
-        LineData lineData = new LineData(dataSet);
-        chart.setData(lineData);
-        chart.setVisibleXRange(30, 30);
-        chart.moveViewToX(rateHistory.getData().size() - 30);
+        YAxis yAxis = chart.getAxisLeft();
+        float min = Float.MAX_VALUE, max = Float.MIN_VALUE;
+        for (Double value :
+                rateHistory.getData()) {
+            if (min > value.floatValue()) min = value.floatValue();
+            if (max < value.floatValue()) max = value.floatValue();
+        }
+        // temporary range (before calculations)
+        float range = (float) Math.abs(max - min);
+
+        // in case all values are equal
+        if (range == 0f) {
+            max = max + 1f;
+            min = min - 1f;
+        }
+        float bottomSpace = range / 100f * yAxis.getSpaceBottom();
+        yAxis.setAxisMinimum(min - bottomSpace);
+        float topSpace = range / 100f * yAxis.getSpaceTop();
+        yAxis.setAxisMaximum(max + topSpace);
+        refreshDataSet();
         chart.animateX(600);
-        mv.setStartTime(rateHistory.getTime());
-        chart.invalidate();
         pair.setClickable(true);
         tabLayout.setTouchEnabled(true);
     }
