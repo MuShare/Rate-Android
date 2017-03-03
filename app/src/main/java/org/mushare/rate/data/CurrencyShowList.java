@@ -13,15 +13,6 @@ import java.util.List;
 public class CurrencyShowList {
     private static String baseCurrencyCid;
     private static List<String> exchangeCurrencyCids = new ArrayList<>();
-    private static boolean needRefresh = true;
-
-    public static boolean isNeedRefresh() {
-        return needRefresh;
-    }
-
-    public static void setNeedRefresh(boolean needRefresh) {
-        CurrencyShowList.needRefresh = needRefresh;
-    }
 
     public synchronized static String getBaseCurrencyCid() {
         return baseCurrencyCid;

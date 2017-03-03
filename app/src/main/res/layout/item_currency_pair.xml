@@ -35,7 +35,7 @@
 
     <TextView
         android:id="@+id/textViewCurrencyBase"
-        style="@style/AppTheme.TextAppearanceSmall"
+        style="@style/AppTheme.TextAppearanceLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -55,7 +55,7 @@
 
     <TextView
         android:id="@+id/textViewCurrency"
-        style="@style/AppTheme.TextAppearanceSmall"
+        style="@style/AppTheme.TextAppearanceLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -72,7 +72,7 @@
         android:layout_alignLeft="@+id/textViewCurrency"
         android:layout_alignStart="@+id/textViewCurrency"
         android:layout_below="@+id/textViewCurrency"
-        android:text="\?"/>
+        android:text="@string/unknown"/>
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardViewCountryFlagBase"

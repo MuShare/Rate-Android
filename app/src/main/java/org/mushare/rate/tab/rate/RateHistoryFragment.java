@@ -60,6 +60,7 @@ public class RateHistoryFragment extends Fragment {
 
     private RateHistory rateHistory = new RateHistory();
     private int timeOffset;
+    private boolean refreshing = true;
 
     @Nullable
     @Override
@@ -172,7 +173,6 @@ public class RateHistoryFragment extends Fragment {
 
         setCurrencyPair();
         chart.invalidate();
-        requestHistoryData();
 
         pair = view.findViewById(R.id.currency_pair);
         pair.setOnClickListener(new View.OnClickListener() {
@@ -206,6 +206,7 @@ public class RateHistoryFragment extends Fragment {
     }
 
     void requestHistoryData() {
+        refreshing = true;
         final String from, to;
         if (!swap) {
             from = cid1;
@@ -253,7 +254,8 @@ public class RateHistoryFragment extends Fragment {
         currencyCodeBase.setText(currencyBase.getCode());
         currencyCode.setText(currency.getCode());
         Double exchangeRate;
-        if ((exchangeRate = RateList.get(to, from)) == null) rate.setText("?");
+        if ((exchangeRate = RateList.get(to, from)) == null)
+            rate.setText(getString(R.string.unknown));
         else {
             DecimalFormat df = new DecimalFormat();
             df.setMaximumFractionDigits(exchangeRate < 0.001 ? 6 : 3);
@@ -265,12 +267,31 @@ public class RateHistoryFragment extends Fragment {
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+        if (refreshing) {
+            requestHistoryData();
+        }
     }
 
     @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("refreshing", refreshing);
+        outState.putBoolean("swap", swap);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            refreshing = savedInstanceState.getBoolean("refreshing", true);
+            swap = savedInstanceState.getBoolean("swap", false);
+        }
     }
 
     void refreshDataSet() {
@@ -350,6 +371,7 @@ public class RateHistoryFragment extends Fragment {
         chart.animateX(600);
         pair.setClickable(true);
         tabLayout.setTouchEnabled(true);
+        refreshing = false;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -357,6 +379,7 @@ public class RateHistoryFragment extends Fragment {
         chart.setNoDataText(getString(R.string.error_refresh_fail));
         chart.invalidate();
         pair.setClickable(true);
+        refreshing = false;
     }
 
     //    public int getStatusBarHeight() {

@@ -2,6 +2,7 @@ package org.mushare.rate.tab.rate;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
@@ -62,6 +63,7 @@ public class RateFragment extends Fragment {
     RateRecyclerView recyclerView;
     Toolbar toolbar;
 
+    private boolean refreshing = true;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
             savedInstanceState) {
@@ -199,7 +201,7 @@ public class RateFragment extends Fragment {
     }
 
     void refresh() {
-        CurrencyShowList.setNeedRefresh(true);
+        refreshing = true;
         swipeRefreshLayout.setRefreshing(true);
         recyclerView.setTouchEnabled(false);
         Thread thread = new Thread() {
@@ -260,7 +262,7 @@ public class RateFragment extends Fragment {
             ((MySwipeLayout) s).setTouchEnabled(true);
         }
         EventBus.getDefault().register(this);
-        if (CurrencyShowList.isNeedRefresh()) {
+        if (refreshing) {
             refresh();
         }
     }
@@ -269,6 +271,19 @@ public class RateFragment extends Fragment {
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("refreshing", refreshing);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null)
+            refreshing = savedInstanceState.getBoolean("refreshing", true);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -290,7 +305,7 @@ public class RateFragment extends Fragment {
                 .getDateTimeInstance().format(new Date(RateList.getUpdateTime())));
         swipeRefreshLayout.setRefreshing(false);
         recyclerView.setTouchEnabled(true);
-        CurrencyShowList.setNeedRefresh(false);
+        refreshing = false;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -299,7 +314,7 @@ public class RateFragment extends Fragment {
                 .LENGTH_SHORT).show();
         swipeRefreshLayout.setRefreshing(false);
         recyclerView.setTouchEnabled(true);
-        CurrencyShowList.setNeedRefresh(false);
+        refreshing = false;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
