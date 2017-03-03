@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -23,6 +24,41 @@
     <include layout="@layout/item_currency_pair"/>
 
     <View style="@style/AppTheme.Divider"/>
+
+    <org.mushare.rate.tab.rate.MyTabLayout
+        android:id="@+id/tabs_time_range"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabBackground="?attr/selectableItemBackgroundBorderless"
+        app:tabIndicatorColor="@android:color/transparent"
+        app:tabSelectedTextColor="@color/colorAccent"
+        app:tabTextColor="@color/colorTextSecondary">
+
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/one_month"/>
+
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/three_months"/>
+
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/six_months"/>
+
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/one_year"/>
+
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/three_years"/>
+    </org.mushare.rate.tab.rate.MyTabLayout>
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"

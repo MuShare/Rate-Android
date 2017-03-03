@@ -12,6 +12,7 @@ import com.github.mikephil.charting.utils.MPPointF;
 import org.mushare.rate.R;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.util.Calendar;
 
 /**
@@ -38,8 +39,10 @@ public class MyMarkerView extends MarkerView {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(startTime);
         cal.add(Calendar.DATE, (int) e.getX());
-        tvContent.setText(DateFormat.getDateInstance().format(cal.getTime()) + "\n" + e.getY());
-
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(e.getY() < 0.001 ? 6 : 3);
+        tvContent.setText(DateFormat.getDateInstance().format(cal.getTime()) + "\n" + df.format(e
+                .getY()));
         super.refreshContent(e, highlight);
     }
 

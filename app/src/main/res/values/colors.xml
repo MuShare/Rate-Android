@@ -11,6 +11,7 @@
     <color name="colorToolbarText">#ffffff</color>
     <color name="colorTextPrimary">#98000000</color>
     <color name="colorTextSecondary">#65000000</color>
+    <color name="colorTextDisabled">#32000000</color>
     <color name="colorSwipeActionText">#ffffff</color>
 
     <color name="colorBottomNavigationBackground">#e6f9f9f9</color>

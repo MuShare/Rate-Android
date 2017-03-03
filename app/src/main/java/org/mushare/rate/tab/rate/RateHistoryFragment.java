@@ -3,6 +3,7 @@ package org.mushare.rate.tab.rate;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -13,7 +14,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -23,8 +23,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-import com.github.mikephil.charting.listener.ChartTouchListener;
-import com.github.mikephil.charting.listener.OnChartGestureListener;
+import com.github.mikephil.charting.highlight.Highlight;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -56,8 +55,10 @@ public class RateHistoryFragment extends Fragment {
     private LineChart chart;
     private MyMarkerView mv;
     private View pair;
+    private MyTabLayout tabLayout;
 
     private RateHistory rateHistory = new RateHistory();
+    private Highlight lastHighlighted;
 
     @Nullable
     @Override
@@ -83,6 +84,46 @@ public class RateHistoryFragment extends Fragment {
         currencyCodeBase = (TextView) view.findViewById(R.id.textViewCurrencyBase);
         currencyCode = (TextView) view.findViewById(R.id.textViewCurrency);
 
+        tabLayout = (MyTabLayout) view.findViewById(R.id.tabs_time_range);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int size = rateHistory.getData().size();
+                switch (tab.getPosition()) {
+                    case 0:
+                        chart.setVisibleXRange(30, 30);
+                        chart.moveViewToX(size - 30);
+                        break;
+                    case 1:
+                        chart.setVisibleXRange(90, 90);
+                        chart.moveViewToX(size - 90);
+                        break;
+                    case 2:
+                        chart.setVisibleXRange(180, 180);
+                        chart.moveViewToX(size - 180);
+                        break;
+                    case 3:
+                        chart.setVisibleXRange(365, 365);
+                        chart.moveViewToX(size - 365);
+                        break;
+                    case 4:
+                        chart.setVisibleXRange(size, size);
+                        chart.moveViewToX(0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
         chart = (LineChart) view.findViewById(R.id.chart);
 
         // create a custom MarkerView (extend MarkerView) and specify the layout
@@ -91,14 +132,16 @@ public class RateHistoryFragment extends Fragment {
         mv.setChartView(chart); // For bounds control
         chart.setMarker(mv); // Set the marker to the chart
 
-        chart.setDragEnabled(true);
+        chart.setDragEnabled(false);
         chart.setScaleEnabled(false);
+//        chart.setScaleYEnabled(false);
         chart.setNoDataText(getString(R.string.chart_no_data));
         chart.setNoDataTextColor(getResources().getColor(R.color.colorTextPrimary));
 
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setLabelCount(4);
+        xAxis.setLabelCount(3, true);
+        xAxis.setGranularity(1);
 //        xAxis.setCenterAxisLabels(true);
         xAxis.setAvoidFirstLastClipping(true);
         xAxis.setDrawGridLines(false);
@@ -117,62 +160,37 @@ public class RateHistoryFragment extends Fragment {
         YAxis yAxis = chart.getAxisLeft();
         yAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
         yAxis.setTextColor(getResources().getColor(R.color.colorTextPrimary));
+//        yAxis.setAxisMinimum(0);
         chart.getAxisRight().setEnabled(false);
         chart.getDescription().setEnabled(false);
         chart.getLegend().setEnabled(false);
-        chart.setOnChartGestureListener(new OnChartGestureListener() {
+
+//        chart.setAutoScaleMinMaxEnabled(true);
+        chart.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture
-                    lastPerformedGesture) {
-
-            }
-
-            @Override
-            public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture
-                    lastPerformedGesture) {
-                // un-highlight values after the gesture is finished and no single-tap
-                if (lastPerformedGesture != ChartTouchListener.ChartGesture.SINGLE_TAP)
-                    chart.highlightValues(null); // or highlightTouch(null) for callback to
-                // onNothingSelected(...)
-            }
-
-            @Override
-            public void onChartLongPressed(MotionEvent me) {
-
-            }
-
-            @Override
-            public void onChartDoubleTapped(MotionEvent me) {
-
-            }
-
-            @Override
-            public void onChartSingleTapped(MotionEvent me) {
-
-            }
-
-            @Override
-            public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float
-                    velocityY) {
-
-            }
-
-            @Override
-            public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
-
-            }
-
-            @Override
-            public void onChartTranslate(MotionEvent me, float dX, float dY) {
-
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_MOVE:
+                    case MotionEvent.ACTION_DOWN:
+                        Highlight h = chart.getHighlightByTouchPoint(event.getX(), event.getY());
+                        if (h != null && !h.equalTo(lastHighlighted)) {
+                            lastHighlighted = h;
+                            chart.highlightValue(h, false);
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        chart.highlightValues(null);
+                        break;
+                }
+                return true;
             }
         });
-
         Bundle bundle = getArguments();
         cid1 = bundle.getString("cid1");
         cid2 = bundle.getString("cid2");
 
         setCurrencyPair();
+        chart.invalidate();
         requestHistoryData();
 
         pair = view.findViewById(R.id.currency_pair);
@@ -188,8 +206,10 @@ public class RateHistoryFragment extends Fragment {
                     }
                 });
                 pair.setClickable(false);
+                tabLayout.setTouchEnabled(false);
                 swap = !swap;
                 setCurrencyPair();
+                chart.setNoDataText(getString(R.string.chart_no_data));
                 chart.clear();
                 requestHistoryData();
             }
@@ -283,28 +303,29 @@ public class RateHistoryFragment extends Fragment {
         dataSet.setLineWidth(1f);
         dataSet.setColor(getResources().getColor(R.color.colorChartLine));
         dataSet.setDrawHorizontalHighlightIndicator(false);
-        dataSet.setHighlightLineWidth(1.5f);
+        dataSet.setHighlightLineWidth(1);
         dataSet.enableDashedHighlightLine(10, 8, 0);
         dataSet.setHighLightColor(getResources().getColor(R.color.colorChartHighLightLine));
         dataSet.setDrawValues(false);
         dataSet.setDrawFilled(true);
         dataSet.setFillColor(Color.GRAY);
         dataSet.setFillAlpha(10);
-
-//        dataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
         LineData lineData = new LineData(dataSet);
         chart.setData(lineData);
+        chart.setVisibleXRange(30, 30);
+        chart.moveViewToX(rateHistory.getData().size() - 30);
         chart.animateX(600);
         mv.setStartTime(rateHistory.getTime());
         chart.invalidate();
         pair.setClickable(true);
+        tabLayout.setTouchEnabled(true);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(RefreshFailEvent event) {
+        chart.setNoDataText(getString(R.string.error_refresh_fail));
+        chart.invalidate();
         pair.setClickable(true);
-        Toast.makeText(getContext(), R.string.error_refresh_fail, Toast
-                .LENGTH_SHORT).show();
     }
 
     //    public int getStatusBarHeight() {
