@@ -65,6 +65,7 @@
         android:typeface="monospace"/>
 
     <TextView
+        android:id="@+id/textViewRate"
         style="@style/AppTheme.TextAppearanceTiny"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

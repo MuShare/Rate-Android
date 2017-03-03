@@ -31,8 +31,10 @@ public class RateList {
         rateMap.put(cid, rate);
     }
 
-    public synchronized static Double get(String cid) {
-        return rateMap.get(cid);
+    public synchronized static Double get(String cid, String base) {
+        Double a = rateMap.get(cid);
+        Double b = rateMap.get(base);
+        return (a == null || b == null) ? null : a / b;
     }
 
     public synchronized static void cache(SQLiteDatabase db) {

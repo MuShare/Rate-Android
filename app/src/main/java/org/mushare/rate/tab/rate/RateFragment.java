@@ -208,7 +208,7 @@ public class RateFragment extends Fragment {
                 String lan = Locale.getDefault().getLanguage() + "-" + Locale.getDefault()
                         .getCountry();
                 if (HttpHelper.getCurrencyList(lan, CurrencyList.getRevision(lan)) == 200 &&
-                        HttpHelper.getCurrencyRates(CurrencyShowList.getBaseCurrencyCid()) == 200) {
+                        HttpHelper.getCurrencyRates("ff808181568824b701568825c7680000") == 200) {
                     RateList.setUpdateTime(System.currentTimeMillis());
                     CurrencyShowList.getExchangeCurrencyRateList(dataSet);
                     EventBus.getDefault().post(new RefreshFinishEvent());
@@ -273,13 +273,13 @@ public class RateFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(BaseCurrencyChangedEvent event) {
-        RateList.clear();
+//        RateList.clear();
         CurrencyShowList.getExchangeCurrencyRateList(dataSet);
         setBaseCurrency();
         startBaseCurrencyViewAnimation();
         adapter.notifyDataSetChanged();
 
-        refresh();
+//        refresh();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

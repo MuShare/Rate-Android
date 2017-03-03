@@ -101,6 +101,7 @@ public class HttpHelper {
                 JSONObject rates = result.getJSONObject("rates");
                 Iterator<String> keys = rates.keys();
                 RateList.clear();
+                RateList.put(from, 1);
                 while (keys.hasNext()) {
                     String cid = keys.next();
                     RateList.put(cid, rates.getDouble(cid));

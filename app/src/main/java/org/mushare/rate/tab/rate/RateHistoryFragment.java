@@ -30,9 +30,11 @@ import org.mushare.rate.R;
 import org.mushare.rate.data.CurrencyList;
 import org.mushare.rate.data.MyCurrency;
 import org.mushare.rate.data.RateHistory;
+import org.mushare.rate.data.RateList;
 import org.mushare.rate.url.HttpHelper;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -50,6 +52,7 @@ public class RateHistoryFragment extends Fragment {
     private ImageView flag;
     private TextView currencyCodeBase;
     private TextView currencyCode;
+    private TextView rate;
     private LineChart chart;
     private MyMarkerView mv;
     private View pair;
@@ -81,6 +84,7 @@ public class RateHistoryFragment extends Fragment {
         flag = (ImageView) view.findViewById(R.id.imageViewCountryFlag);
         currencyCodeBase = (TextView) view.findViewById(R.id.textViewCurrencyBase);
         currencyCode = (TextView) view.findViewById(R.id.textViewCurrency);
+        rate = (TextView) view.findViewById(R.id.textViewRate);
 
         tabLayout = (MyTabLayout) view.findViewById(R.id.tabs_time_range);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -226,15 +230,16 @@ public class RateHistoryFragment extends Fragment {
     }
 
     void setCurrencyPair() {
-        MyCurrency currencyBase;
-        MyCurrency currency;
+        final String from, to;
         if (!swap) {
-            currencyBase = CurrencyList.get(cid1);
-            currency = CurrencyList.get(cid2);
+            from = cid1;
+            to = cid2;
         } else {
-            currencyBase = CurrencyList.get(cid2);
-            currency = CurrencyList.get(cid1);
+            from = cid2;
+            to = cid1;
         }
+        MyCurrency currencyBase = CurrencyList.get(from);
+        MyCurrency currency = CurrencyList.get(to);
         int resID = getContext().getResources().getIdentifier
                 ("ic_flag_" + currencyBase.getIcon(), "drawable", getContext().getPackageName());
         if (resID != 0) {
@@ -247,6 +252,13 @@ public class RateHistoryFragment extends Fragment {
         }
         currencyCodeBase.setText(currencyBase.getCode());
         currencyCode.setText(currency.getCode());
+        Double exchangeRate;
+        if ((exchangeRate = RateList.get(to, from)) == null) rate.setText("?");
+        else {
+            DecimalFormat df = new DecimalFormat();
+            df.setMaximumFractionDigits(exchangeRate < 0.001 ? 6 : 3);
+            rate.setText(df.format(exchangeRate));
+        }
     }
 
     @Override

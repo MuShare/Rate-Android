@@ -53,9 +53,7 @@ public class CurrencyShowList {
             (List<MyCurrencyRate> list) {
         list.clear();
         for (String cid : exchangeCurrencyCids) {
-            MyCurrency currency = CurrencyList.get(cid);
-            if (currency != null)
-                list.add(new MyCurrencyRate(currency, RateList.get(cid)));
+            list.add(new MyCurrencyRate(CurrencyList.get(cid), RateList.get(cid, baseCurrencyCid)));
         }
         return list;
     }
