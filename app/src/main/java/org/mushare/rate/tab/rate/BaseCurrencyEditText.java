@@ -1,15 +1,14 @@
 package org.mushare.rate.tab.rate;
 
-import android.annotation.TargetApi;
 import android.content.Context;
+import android.support.v7.widget.AppCompatEditText;
 import android.util.AttributeSet;
-import android.widget.EditText;
 
 /**
  * Created by dklap on 1/9/2017.
  */
 
-public class BaseCurrencyEditText extends EditText {
+public class BaseCurrencyEditText extends AppCompatEditText {
     public BaseCurrencyEditText(Context context) {
         super(context);
     }
@@ -20,12 +19,6 @@ public class BaseCurrencyEditText extends EditText {
 
     public BaseCurrencyEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-    }
-
-    @TargetApi(21)
-    public BaseCurrencyEditText(Context context, AttributeSet attrs, int defStyleAttr, int
-            defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     @Override

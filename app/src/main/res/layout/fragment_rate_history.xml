@@ -23,7 +23,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/item_currency_pair"/>
+    <include layout="@layout/combination_currency_pair"/>
 
     <View style="@style/AppTheme.Divider"/>
 
@@ -62,9 +62,31 @@
             android:text="@string/three_years"/>
     </org.mushare.rate.tab.rate.MyTabLayout>
 
+    <LinearLayout
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/history_chart_bottom_margin"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/history_wait_progress_margin"/>
+
+        <TextView
+            style="@style/AppTheme.TextAppearanceMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wait"/>
+    </LinearLayout>
+
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/history_chart_bottom_margin"/>
+        android:layout_marginBottom="@dimen/history_chart_bottom_margin"
+        android:visibility="gone"/>
 </LinearLayout>

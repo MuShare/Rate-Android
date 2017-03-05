@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -38,6 +39,10 @@ public class CurrencyShowList {
             baseCurrencyCid = exchangeCurrencyCids.set(index, baseCurrencyCid);
             return true;
         } else return false;
+    }
+
+    public synchronized static void swapExchangeCurrencyCid(int index1, int index2) {
+        Collections.swap(exchangeCurrencyCids, index1, index2);
     }
 
     public synchronized static List<MyCurrencyRate> getExchangeCurrencyRateList

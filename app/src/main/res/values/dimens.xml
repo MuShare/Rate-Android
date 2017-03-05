@@ -17,6 +17,7 @@
     <dimen name="history_currency_pair_vertical_margin">16dp</dimen>
     <dimen name="history_chart_bottom_margin">64dp</dimen>
     <dimen name="history_chart_horizontal_margin">8dp</dimen>
+    <dimen name="history_wait_progress_margin">8dp</dimen>
 
     <dimen name="chart_marker_text_horizontal_margin">8dp</dimen>
     <dimen name="chart_marker_text_vertical_margin">4dp</dimen>

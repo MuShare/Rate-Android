@@ -1,14 +1,16 @@
 package org.mushare.rate.tab.rate;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.TypedValue;
@@ -51,7 +53,7 @@ import java.util.Locale;
  * Created by dklap on 12/16/2016.
  */
 
-public class RateFragment extends Fragment {
+public class RateFragment extends Fragment implements RateRecyclerViewAdapter.Callback {
     List<MyCurrencyRate> dataSet = new LinkedList<>();
 
     SwipeRefreshLayout swipeRefreshLayout;
@@ -62,8 +64,12 @@ public class RateFragment extends Fragment {
     RateRecyclerViewAdapter adapter;
     RateRecyclerView recyclerView;
     Toolbar toolbar;
+    AppBarLayout appBarLayout;
+    ItemTouchHelper itemTouchHelper;
 
     private boolean refreshing = true;
+    private boolean appBarExpanded = true;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
             savedInstanceState) {
@@ -71,6 +77,15 @@ public class RateFragment extends Fragment {
 
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
+
+        appBarLayout = (AppBarLayout) view.findViewById(R.id.appbar_layout);
+        appBarLayout.setExpanded(appBarExpanded, false);
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                appBarExpanded = (verticalOffset == 0);
+            }
+        });
 
         recyclerView = (RateRecyclerView) view.findViewById(R.id.recyclerView);
 
@@ -81,14 +96,69 @@ public class RateFragment extends Fragment {
         // use a linear layout manager
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(layoutManager);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView
-                .getContext(),
-                DividerItemDecoration.VERTICAL);
-        dividerItemDecoration.setDrawable(getResources().getDrawable(R.drawable.list_divider));
-        recyclerView.addItemDecoration(dividerItemDecoration);
         // specify an adapter (see also next example)
-        adapter = new RateRecyclerViewAdapter(dataSet);
+        adapter = new RateRecyclerViewAdapter(dataSet, this);
         recyclerView.setAdapter(adapter);
+
+        ItemTouchHelper.Callback callback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP
+                | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,
+                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean isLongPressDragEnabled() {
+                return false;
+            }
+
+            @Override
+            public boolean isItemViewSwipeEnabled() {
+                return false;
+            }
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                                  RecyclerView.ViewHolder target) {
+                adapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                return true;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                adapter.onItemDismiss(viewHolder.getAdapterPosition());
+            }
+
+            @Override
+            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+                // We only want the active item to change
+                if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
+                    viewHolder.itemView.setBackground(getResources().getDrawable(R.drawable
+                            .float_item_background));
+                    if (Build.VERSION.SDK_INT >= 21)
+                        viewHolder.itemView.animate().scaleX(1.05f).scaleY(1.05f).translationZ
+                                (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16,
+                                        getResources().getDisplayMetrics())).setDuration(300)
+                                .setInterpolator(new OvershootInterpolator()).withLayer();
+                    else viewHolder.itemView.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300)
+                            .setInterpolator(new OvershootInterpolator()).withLayer();
+                }
+
+                super.onSelectedChanged(viewHolder, actionState);
+            }
+
+            @Override
+            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                super.clearView(recyclerView, viewHolder);
+                viewHolder.itemView.setBackgroundColor(getResources().getColor(R.color
+                        .colorBackground));
+                if (Build.VERSION.SDK_INT >= 21)
+                    viewHolder.itemView.animate().scaleX(1f).scaleY(1f).translationZ(0)
+                            .setDuration(300).setInterpolator(new OvershootInterpolator())
+                            .withLayer();
+                else viewHolder.itemView.animate().scaleX(1f).scaleY(1f).setDuration(300)
+                        .setInterpolator(new OvershootInterpolator()).withLayer();
+            }
+        };
+        itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
         textViewBaseCurrencyName = (TextView) view.findViewById(R.id.textViewBaseCurrencyCode);
         textViewBaseCurrencyInfo = (TextView) view.findViewById(R.id.textViewBaseCurrencyName);
@@ -211,7 +281,6 @@ public class RateFragment extends Fragment {
                         .getCountry();
                 if (HttpHelper.getCurrencyList(lan, CurrencyList.getRevision(lan)) == 200 &&
                         HttpHelper.getCurrencyRates("ff808181568824b701568825c7680000") == 200) {
-                    RateList.setUpdateTime(System.currentTimeMillis());
                     CurrencyShowList.getExchangeCurrencyRateList(dataSet);
                     EventBus.getDefault().post(new RefreshFinishEvent());
                 } else EventBus.getDefault().post(new RefreshFailEvent());
@@ -277,24 +346,16 @@ public class RateFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("refreshing", refreshing);
+        outState.putBoolean("appbar_expanded", appBarExpanded);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null)
+        if (savedInstanceState != null) {
             refreshing = savedInstanceState.getBoolean("refreshing", true);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(BaseCurrencyChangedEvent event) {
-//        RateList.clear();
-        CurrencyShowList.getExchangeCurrencyRateList(dataSet);
-        setBaseCurrency();
-        startBaseCurrencyViewAnimation();
-        adapter.notifyDataSetChanged();
-
-//        refresh();
+            appBarExpanded = savedInstanceState.getBoolean("appbar_expanded", true);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -317,50 +378,34 @@ public class RateFragment extends Fragment {
         refreshing = false;
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(LaunchHistoryActivity event) {
-//        Intent intent = new Intent(getContext(), RateHistoryActivity.class);
-//        intent.putExtra("in_currency", CurrencyShowList.getBaseCurrencyCid());
-//        intent.putExtra("out_currency", CurrencyShowList.getExchangeCurrencyCid
-//                (event.getIndex()));
-//        startActivityForResult(intent, 0);
+    @Override
+    public void showTimeLine(int index) {
         RateHistoryFragment fragment = new RateHistoryFragment();
         Bundle bundle = new Bundle();
         bundle.putString("cid1", CurrencyShowList.getBaseCurrencyCid());
-        bundle.putString("cid2", CurrencyShowList.getExchangeCurrencyCid(event.getIndex()));
+        bundle.putString("cid2", CurrencyShowList.getExchangeCurrencyCid(index));
         fragment.setArguments(bundle);
         getFragmentManager().beginTransaction().replace(R.id.main_container, fragment)
                 .addToBackStack(null).commit();
     }
 
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        // Check which request we're responding to
-//        if (requestCode == 0) {
-//            // Make sure the request was successful
-//            adapter.closeAllItems();
-//        }
-//    }
+    @Override
+    public void onBaseCurrencyChanged() {
+        CurrencyShowList.getExchangeCurrencyRateList(dataSet);
+        setBaseCurrency();
+        startBaseCurrencyViewAnimation();
+        adapter.notifyDataSetChanged();
+    }
 
-    public static class BaseCurrencyChangedEvent {
+    @Override
+    public void onStartDrag(RateRecyclerViewAdapter.ViewHolder viewHolder) {
+        itemTouchHelper.startDrag(viewHolder);
     }
 
     public static class RefreshFinishEvent {
     }
 
     public static class RefreshFailEvent {
-    }
-
-    public static class LaunchHistoryActivity {
-        int index;
-
-        public LaunchHistoryActivity(int index) {
-            this.index = index;
-        }
-
-        public int getIndex() {
-            return index;
-        }
     }
 }
 

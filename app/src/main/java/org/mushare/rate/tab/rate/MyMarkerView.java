@@ -42,7 +42,11 @@ public class MyMarkerView extends MarkerView {
         cal.setTimeInMillis(startTime);
         cal.add(Calendar.DATE, (int) e.getX() + timeOffset);
         DecimalFormat df = new DecimalFormat();
-        df.setMaximumFractionDigits(e.getY() < 0.001 ? 6 : 3);
+        if (e.getY() >= 1) df.setMaximumFractionDigits(2);
+        else if (e.getY() >= 0.1) df.setMaximumFractionDigits(3);
+        else if (e.getY() >= 0.01) df.setMaximumFractionDigits(4);
+        else if (e.getY() >= 0.001) df.setMaximumFractionDigits(5);
+        else if (e.getY() >= 0.0001) df.setMaximumFractionDigits(6);
         tvContent.setText(DateFormat.getDateInstance().format(cal.getTime()) + "\n" + df.format(e
                 .getY()));
         super.refreshContent(e, highlight);
@@ -64,7 +68,6 @@ public class MyMarkerView extends MarkerView {
         Chart chart = getChartView();
 
         float width = getWidth();
-        float height = getHeight();
 
         if (posX + mOffset2.x < 0) {
             mOffset2.x = -posX;

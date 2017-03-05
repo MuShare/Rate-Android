@@ -9,6 +9,7 @@
 
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorToolbarBackground"
@@ -20,7 +21,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|enterAlways|snap"
-            app:subtitleTextAppearance="@style/AppTheme.TextAppearanceTiny"/>
+            app:subtitleTextAppearance="@style/AppTheme.TextAppearanceTiny"
+            app:subtitleTextColor="@color/colorToolbarText"/>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -45,7 +47,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/base_currency"/>
 
-                <include layout="@layout/item_base_currency"/>
+                <include layout="@layout/combination_base_currency"/>
 
                 <View
                     style="@style/AppTheme.Divider"
@@ -71,6 +73,7 @@
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/colorListBackground"
                 android:clipToPadding="false"
                 android:paddingBottom="@dimen/bottom_navigation_bar_height"
                 android:scrollbars="vertical"/>

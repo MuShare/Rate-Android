@@ -15,12 +15,12 @@ import android.widget.Toast;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 
-import org.greenrobot.eventbus.EventBus;
 import org.mushare.rate.R;
 import org.mushare.rate.data.CurrencyShowList;
 import org.mushare.rate.data.MyCurrency;
 import org.mushare.rate.data.MyCurrencyRate;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -29,24 +29,34 @@ import java.util.Locale;
  */
 class RateRecyclerViewAdapter extends RecyclerSwipeAdapter<RateRecyclerViewAdapter.ViewHolder> {
     private List<MyCurrencyRate> mDataset;
+    private Callback mCallback;
     private double base = 100;
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    RateRecyclerViewAdapter(List<MyCurrencyRate> myDataset) {
+    RateRecyclerViewAdapter(List<MyCurrencyRate> myDataset, Callback myCallback) {
         mDataset = myDataset;
-//        mItemManger = new SwipeItemRecyclerMangerImpl(this) {
-//            @Override
-//            public void closeAllItems() {
-//                if (getMode() == Attributes.Mode.Multiple) {
-//                    mOpenPositions.clear();
-//                } else {
-//                    mOpenPosition = INVALID_POSITION;
-//                }
-//                for (SwipeLayout s : mShownLayouts) {
-//                    s.close();
-//                }
-//            }
-//        };
+        mCallback = myCallback;
+    }
+
+    public void onItemDismiss(int position) {
+        mDataset.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(mDataset, i, i + 1);
+                CurrencyShowList.swapExchangeCurrencyCid(i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(mDataset, i, i - 1);
+                CurrencyShowList.swapExchangeCurrencyCid(i, i - 1);
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
     }
 
     void setBase(double base) {
@@ -63,7 +73,7 @@ class RateRecyclerViewAdapter extends RecyclerSwipeAdapter<RateRecyclerViewAdapt
                                                                  int viewType) {
         // create a new view
         MySwipeLayout swipeLayout = (MySwipeLayout) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_exchange_currency, parent, false);
+                .inflate(R.layout.list_item_exchange_currency, parent, false);
 
         //set show mode.
         swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
@@ -92,7 +102,7 @@ class RateRecyclerViewAdapter extends RecyclerSwipeAdapter<RateRecyclerViewAdapt
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         MyCurrencyRate myCurrencyRate = mDataset.get(position);
@@ -114,6 +124,44 @@ class RateRecyclerViewAdapter extends RecyclerSwipeAdapter<RateRecyclerViewAdapt
             holder.imageViewCountryFlag.setImageResource(resID);
         }
         mItemManger.bindView(holder.itemView, position);
+
+        ((MySwipeLayout) holder.itemView).setOnOpenByUserListener(new MySwipeLayout
+                .OpenByUserListener() {
+            @Override
+            public void onOpenByUser() {
+                mCallback.showTimeLine(holder.getAdapterPosition());
+            }
+        });
+        holder.combinationExchangeCurrency.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (CurrencyShowList.swapBaseCurrencyCid(holder.getAdapterPosition()))
+                    mCallback.onBaseCurrencyChanged();
+            }
+        });
+        holder.combinationExchangeCurrency.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mCallback.onStartDrag(holder);
+                return true;
+            }
+        });
+        holder.textViewExchangeRate.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                String rate = holder.textViewExchangeRate.getText().toString().replace(",", "");
+                if (!rate.equals(holder.textViewExchangeRate.getResources().getString(R.string
+                        .unknown))) {
+                    ClipboardManager clipboard = (ClipboardManager) v.getContext()
+                            .getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText(rate, rate);
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(v.getContext(), v.getResources().getString(R.string
+                            .info_copy_success), Toast.LENGTH_LONG).show();
+                }
+                return true;
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -127,6 +175,14 @@ class RateRecyclerViewAdapter extends RecyclerSwipeAdapter<RateRecyclerViewAdapt
         return R.id.swipeLayout;
     }
 
+    interface Callback {
+        void showTimeLine(int index);
+
+        void onBaseCurrencyChanged();
+
+        void onStartDrag(ViewHolder viewHolder);
+    }
+
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
@@ -136,6 +192,7 @@ class RateRecyclerViewAdapter extends RecyclerSwipeAdapter<RateRecyclerViewAdapt
         TextView textViewCurrencyCode;
         TextView textViewCurrencyName;
         ImageView imageViewCountryFlag;
+        View combinationExchangeCurrency;
 
         ViewHolder(View v) {
             super(v);
@@ -143,43 +200,7 @@ class RateRecyclerViewAdapter extends RecyclerSwipeAdapter<RateRecyclerViewAdapt
             textViewCurrencyCode = (TextView) v.findViewById(R.id.textViewCurrencyCode);
             textViewCurrencyName = (TextView) v.findViewById(R.id.textViewCurrencyName);
             imageViewCountryFlag = (ImageView) v.findViewById(R.id.imageViewCountryFlag);
-
-            View viewExchangeCurrency = v.findViewById(R.id.exchangeCurrency);
-            viewExchangeCurrency.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (CurrencyShowList.swapBaseCurrencyCid(getAdapterPosition()))
-                        EventBus.getDefault().post(new RateFragment.BaseCurrencyChangedEvent());
-                }
-            });
-            viewExchangeCurrency.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    return true;
-                }
-            });
-            textViewExchangeRate.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    String rate = textViewExchangeRate.getText().toString().replace(",", "");
-                    if (!rate.equals("-")) {
-                        ClipboardManager clipboard = (ClipboardManager) v.getContext()
-                                .getSystemService(Context.CLIPBOARD_SERVICE);
-                        ClipData clip = ClipData.newPlainText(rate, rate);
-                        clipboard.setPrimaryClip(clip);
-                        Toast.makeText(v.getContext(), v.getResources().getString(R.string
-                                .info_copy_success), Toast.LENGTH_LONG).show();
-                    }
-                    return true;
-                }
-            });
-            ((MySwipeLayout) v).setOnOpenByUserListener(new MySwipeLayout.OpenByUserListener() {
-                @Override
-                public void onOpenByUser() {
-                    EventBus.getDefault().post(new RateFragment.LaunchHistoryActivity
-                            (getAdapterPosition()));
-                }
-            });
+            combinationExchangeCurrency = v.findViewById(R.id.exchangeCurrency);
         }
 
     }

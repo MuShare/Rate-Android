@@ -106,6 +106,7 @@ public class HttpHelper {
                     String cid = keys.next();
                     RateList.put(cid, rates.getDouble(cid));
                 }
+                RateList.setUpdateTime(System.currentTimeMillis());
             } catch (JSONException e) {
                 e.printStackTrace();
             }

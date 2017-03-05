@@ -7,7 +7,7 @@
     <string name="tab_me">Me</string>
 
     <string name="timeline">Timeline</string>
-    <string name="chart_no_data">Wait a moment…</string>
+    <string name="wait">Wait a moment…</string>
     <string name="one_month">1M</string>
     <string name="three_months">3M</string>
     <string name="six_months">6M</string>
@@ -15,7 +15,7 @@
     <string name="three_years">3Y</string>
 
     <string name="base_currency">Base Currency</string>
-    <string name="base_currency_default_number">100</string>
+    <string name="base_currency_default_number">100.00</string>
     <string name="exchange_currency">Exchange Currency</string>
     <string name="unknown">-</string>
     <string name="update_time_prefix">Last updated:\u0020</string>

@@ -54,6 +54,7 @@ public class RateHistoryFragment extends Fragment {
     private TextView currencyCode;
     private TextView rate;
     private LineChart chart;
+    private View progressBar;
     private MyMarkerView mv;
     private View pair;
     private MyTabLayout tabLayout;
@@ -123,6 +124,7 @@ public class RateHistoryFragment extends Fragment {
             }
         });
 
+        progressBar = view.findViewById(R.id.progressBar);
         chart = (LineChart) view.findViewById(R.id.chart);
 
         // create a custom MarkerView (extend MarkerView) and specify the layout
@@ -134,7 +136,7 @@ public class RateHistoryFragment extends Fragment {
 //        chart.setDragEnabled(false);
         chart.setScaleEnabled(false);
 //        chart.setScaleYEnabled(false);
-        chart.setNoDataText(getString(R.string.chart_no_data));
+        chart.setNoDataText(getString(R.string.error_refresh_fail));
         chart.setNoDataTextColor(getResources().getColor(R.color.colorTextPrimary));
 
         XAxis xAxis = chart.getXAxis();
@@ -179,6 +181,7 @@ public class RateHistoryFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 pair.setClickable(false);
+                pair.setLongClickable(false);
                 tabLayout.setTouchEnabled(false);
                 swap = !swap;
                 setCurrencyPair();
@@ -190,7 +193,8 @@ public class RateHistoryFragment extends Fragment {
                                 OvershootInterpolator()).withLayer();
                     }
                 });
-                chart.setNoDataText(getString(R.string.chart_no_data));
+                progressBar.setVisibility(View.VISIBLE);
+                chart.setVisibility(View.GONE);
                 chart.clear();
                 requestHistoryData();
             }
@@ -258,7 +262,11 @@ public class RateHistoryFragment extends Fragment {
             rate.setText(getString(R.string.unknown));
         else {
             DecimalFormat df = new DecimalFormat();
-            df.setMaximumFractionDigits(exchangeRate < 0.001 ? 6 : 3);
+            if (exchangeRate >= 1) df.setMaximumFractionDigits(2);
+            else if (exchangeRate >= 0.1) df.setMaximumFractionDigits(3);
+            else if (exchangeRate >= 0.01) df.setMaximumFractionDigits(4);
+            else if (exchangeRate >= 0.001) df.setMaximumFractionDigits(5);
+            else if (exchangeRate >= 0.0001) df.setMaximumFractionDigits(6);
             rate.setText(df.format(exchangeRate));
         }
     }
@@ -356,7 +364,7 @@ public class RateHistoryFragment extends Fragment {
             if (max < value.floatValue()) max = value.floatValue();
         }
         // temporary range (before calculations)
-        float range = (float) Math.abs(max - min);
+        float range = Math.abs(max - min);
 
         // in case all values are equal
         if (range == 0f) {
@@ -368,17 +376,21 @@ public class RateHistoryFragment extends Fragment {
         float topSpace = range / 100f * yAxis.getSpaceTop();
         yAxis.setAxisMaximum(max + topSpace);
         refreshDataSet();
+        progressBar.setVisibility(View.GONE);
+        chart.setVisibility(View.VISIBLE);
         chart.animateX(600);
         pair.setClickable(true);
+        pair.setLongClickable(true);
         tabLayout.setTouchEnabled(true);
         refreshing = false;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(RefreshFailEvent event) {
-        chart.setNoDataText(getString(R.string.error_refresh_fail));
-        chart.invalidate();
+        progressBar.setVisibility(View.GONE);
+        chart.setVisibility(View.VISIBLE);
         pair.setClickable(true);
+        pair.setLongClickable(true);
         refreshing = false;
     }
 
