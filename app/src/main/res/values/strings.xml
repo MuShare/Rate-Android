@@ -30,4 +30,5 @@
     <string name="action_refresh">Refresh</string>
     <string name="action_add_reminder">Add reminder</string>
     <string name="action_timeline">Timeline</string>
+    <string name="action_delete">Delete</string>
 </resources>

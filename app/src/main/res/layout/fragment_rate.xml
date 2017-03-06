@@ -47,7 +47,9 @@
                     android:layout_height="wrap_content"
                     android:text="@string/base_currency"/>
 
-                <include layout="@layout/combination_base_currency"/>
+                <include
+                    android:id="@+id/baseCurrency"
+                    layout="@layout/combination_base_currency"/>
 
                 <View
                     style="@style/AppTheme.Divider"

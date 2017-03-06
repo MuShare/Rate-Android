@@ -1,11 +1,13 @@
 package org.mushare.rate.tab.rate;
 
 import android.content.Context;
-import android.os.Build;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,8 +29,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.daimajia.swipe.SwipeLayout;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -103,15 +103,15 @@ public class RateFragment extends Fragment implements RateRecyclerViewAdapter.Ca
         ItemTouchHelper.Callback callback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP
                 | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            int oldX = 0;
 
             @Override
             public boolean isLongPressDragEnabled() {
                 return false;
             }
 
-            @Override
-            public boolean isItemViewSwipeEnabled() {
-                return false;
+            public float getSwipeThreshold(RecyclerView.ViewHolder viewHolder) {
+                return .3f;
             }
 
             @Override
@@ -123,38 +123,63 @@ public class RateFragment extends Fragment implements RateRecyclerViewAdapter.Ca
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                adapter.onItemDismiss(viewHolder.getAdapterPosition());
+                if (direction == ItemTouchHelper.RIGHT)
+                    adapter.onItemDismiss(viewHolder.getAdapterPosition());
+                else showTimeLine(viewHolder.getAdapterPosition());
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder
+                    viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    if (dX > 0 && oldX <= 0) {
+                        viewHolder.itemView.findViewById(R.id.timeline_background).setVisibility
+                                (View.INVISIBLE);
+                        viewHolder.itemView.findViewById(R.id.delete_background).setVisibility(View
+                                .VISIBLE);
+                        oldX = 1;
+                    } else if (dX < 0 && oldX >= 0) {
+                        viewHolder.itemView.findViewById(R.id.timeline_background).setVisibility
+                                (View.VISIBLE);
+                        viewHolder.itemView.findViewById(R.id.delete_background).setVisibility(View
+                                .INVISIBLE);
+                        oldX = -1;
+                    }
+                    viewHolder.itemView.findViewById(R.id.foreground).setTranslationX(dX);
+                } else super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState,
+                        isCurrentlyActive);
             }
 
             @Override
             public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
-                // We only want the active item to change
-                if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
-                    viewHolder.itemView.setBackground(getResources().getDrawable(R.drawable
-                            .float_item_background));
-                    if (Build.VERSION.SDK_INT >= 21)
-                        viewHolder.itemView.animate().scaleX(1.05f).scaleY(1.05f).translationZ
-                                (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16,
-                                        getResources().getDisplayMetrics())).setDuration(300)
-                                .setInterpolator(new OvershootInterpolator()).withLayer();
-                    else viewHolder.itemView.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300)
+                if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+                    viewHolder.itemView.findViewById(R.id.divider).setVisibility(View.INVISIBLE);
+                    viewHolder.itemView.findViewById(R.id.foreground).setBackgroundColor(Color
+                            .TRANSPARENT);
+//                    viewHolder.itemView.setBackground(getResources().getDrawable(R.drawable
+//                            .float_item_background));
+                    ViewCompat.animate(viewHolder.itemView).scaleX(1.05f).scaleY(1.05f)
+                            .translationZ(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                                    8f, getResources().getDisplayMetrics())).setDuration(300)
                             .setInterpolator(new OvershootInterpolator()).withLayer();
                 }
-
                 super.onSelectedChanged(viewHolder, actionState);
             }
 
             @Override
             public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 super.clearView(recyclerView, viewHolder);
-                viewHolder.itemView.setBackgroundColor(getResources().getColor(R.color
-                        .colorBackground));
-                if (Build.VERSION.SDK_INT >= 21)
-                    viewHolder.itemView.animate().scaleX(1f).scaleY(1f).translationZ(0)
-                            .setDuration(300).setInterpolator(new OvershootInterpolator())
-                            .withLayer();
-                else viewHolder.itemView.animate().scaleX(1f).scaleY(1f).setDuration(300)
-                        .setInterpolator(new OvershootInterpolator()).withLayer();
+                viewHolder.itemView.findViewById(R.id.divider).setVisibility(View.VISIBLE);
+                View foreground = viewHolder.itemView.findViewById(R.id.foreground);
+                foreground.setBackgroundColor(getResources().getColor(R.color.colorBackground));
+                foreground.setTranslationX(0);
+//                viewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
+                ViewCompat.animate(viewHolder.itemView).scaleX(1f).scaleY(1f).translationZ(0)
+                        .setDuration(300).setInterpolator(new OvershootInterpolator()).withLayer();
+                viewHolder.itemView.findViewById(R.id.timeline_background).setVisibility(View.GONE);
+                viewHolder.itemView.findViewById(R.id.delete_background).setVisibility(View.GONE);
+                oldX = 0;
             }
         };
         itemTouchHelper = new ItemTouchHelper(callback);
@@ -260,9 +285,6 @@ public class RateFragment extends Fragment implements RateRecyclerViewAdapter.Ca
         CurrencyShowList.getExchangeCurrencyRateList(dataSet);
         adapter.notifyDataSetChanged();
 
-//        toolbar.setSubtitle(getResources().getString(R.string.update_time_prefix) + DateFormat
-// .getDateTimeInstance().format(new Date()));
-
         if (RateList.getUpdateTime() != 0)
             toolbar.setSubtitle(getResources().getString(R.string.update_time_prefix) +
                     DateFormat.getDateTimeInstance().format(new Date(RateList.getUpdateTime())));
@@ -316,6 +338,16 @@ public class RateFragment extends Fragment implements RateRecyclerViewAdapter.Ca
         });
     }
 
+    public void showTimeLine(int index) {
+        RateHistoryFragment fragment = new RateHistoryFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("cid1", CurrencyShowList.getBaseCurrencyCid());
+        bundle.putString("cid2", CurrencyShowList.getExchangeCurrencyCid(index));
+        fragment.setArguments(bundle);
+        getFragmentManager().beginTransaction().replace(R.id.main_container, fragment)
+                .addToBackStack(null).commit();
+    }
+
     @Override
     public void onPause() {
         InputMethodManager keyboard = (InputMethodManager) getContext()
@@ -327,9 +359,6 @@ public class RateFragment extends Fragment implements RateRecyclerViewAdapter.Ca
     @Override
     public void onStart() {
         super.onStart();
-        for (SwipeLayout s : adapter.mItemManger.getOpenLayouts()) {
-            ((MySwipeLayout) s).setTouchEnabled(true);
-        }
         EventBus.getDefault().register(this);
         if (refreshing) {
             refresh();
@@ -376,17 +405,6 @@ public class RateFragment extends Fragment implements RateRecyclerViewAdapter.Ca
         swipeRefreshLayout.setRefreshing(false);
         recyclerView.setTouchEnabled(true);
         refreshing = false;
-    }
-
-    @Override
-    public void showTimeLine(int index) {
-        RateHistoryFragment fragment = new RateHistoryFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString("cid1", CurrencyShowList.getBaseCurrencyCid());
-        bundle.putString("cid2", CurrencyShowList.getExchangeCurrencyCid(index));
-        fragment.setArguments(bundle);
-        getFragmentManager().beginTransaction().replace(R.id.main_container, fragment)
-                .addToBackStack(null).commit();
     }
 
     @Override

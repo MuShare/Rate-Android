@@ -34,6 +34,10 @@ public class CurrencyShowList {
         } else return null;
     }
 
+    public synchronized static void removeExchangeCurrencyCid(int index) {
+        exchangeCurrencyCids.remove(index);
+    }
+
     public synchronized static boolean swapBaseCurrencyCid(int index) {
         if (exchangeCurrencyCids.size() > index && index > -1) {
             baseCurrencyCid = exchangeCurrencyCids.set(index, baseCurrencyCid);

@@ -5,8 +5,8 @@
     <color name="colorAccent">#ef6174</color>
 
     <!--<color name="colorListTitleBackground">#ffff</color>-->
-    <color name="colorBackground">#f9f9f9</color>
-    <color name="colorListBackground">#f0f0f0</color>
+    <color name="colorBackground">#fafafa</color>
+    <color name="colorListBackground">#f5f5f5</color>
     <color name="colorListDivider">#e0e0e0</color>
     <color name="colorToolbarBackground">#5166b4</color>
     <color name="colorToolbarText">#ffffff</color>
@@ -15,7 +15,7 @@
     <color name="colorTextDisabled">#32000000</color>
     <color name="colorSwipeActionText">#ffffff</color>
 
-    <color name="colorBottomNavigationBackground">#e6f9f9f9</color>
+    <color name="colorBottomNavigationBackground">#e6fafafa</color>
 
     <color name="colorChartLine">#5166b4</color>
     <color name="colorChartHighLightLine">#ef6174</color>

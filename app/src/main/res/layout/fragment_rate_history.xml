@@ -23,7 +23,9 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/combination_currency_pair"/>
+    <include
+        android:id="@+id/currency_pair"
+        layout="@layout/combination_currency_pair"/>
 
     <View style="@style/AppTheme.Divider"/>
 

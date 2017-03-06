@@ -1,7 +1,7 @@
 <resources>
     <dimen name="divider_height">1px</dimen>
     <!--<dimen name="divider_horizontal_margin">8dp</dimen>-->
-    <dimen name="swipe_button_margin">8dp</dimen>
+    <dimen name="swipe_button_margin">16dp</dimen>
     <dimen name="bottom_navigation_bar_height">56dp</dimen>
     <dimen name="list_title_horizontal_margin">16dp</dimen>
     <dimen name="list_title_vertical_margin">4dp</dimen>
@@ -19,7 +19,7 @@
     <dimen name="history_chart_horizontal_margin">8dp</dimen>
     <dimen name="history_wait_progress_margin">8dp</dimen>
 
-    <dimen name="chart_marker_text_horizontal_margin">8dp</dimen>
-    <dimen name="chart_marker_text_vertical_margin">4dp</dimen>
-    <dimen name="chart_marker_padding">8dp</dimen>
+    <dimen name="chart_marker_text_horizontal_padding">8dp</dimen>
+    <dimen name="chart_marker_text_vertical_padding">4dp</dimen>
+    <dimen name="chart_marker_horizontal_margin">8dp</dimen>
 </resources>
