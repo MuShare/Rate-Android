@@ -12,9 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.mushare.rate.R;
+import org.mushare.rate.data.CurrencyList;
 import org.mushare.rate.data.CurrencyShowList;
 import org.mushare.rate.data.MyCurrency;
 import org.mushare.rate.data.MyCurrencyRate;
+import org.mushare.rate.data.RateList;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,10 +36,17 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
         mCallback = myCallback;
     }
 
-    public void onItemDismiss(int position) {
+    public String onItemDismiss(int position) {
         mDataset.remove(position);
-        CurrencyShowList.removeExchangeCurrencyCid(position);
         notifyItemRemoved(position);
+        return CurrencyShowList.removeExchangeCurrencyCid(position);
+    }
+
+    public void onItemInsert(int position, String cid) {
+        mDataset.add(position, new MyCurrencyRate(CurrencyList.get(cid), RateList.get(cid,
+                CurrencyShowList.getBaseCurrencyCid())));
+        CurrencyShowList.insertExchangeCurrencyCid(position, cid);
+        notifyItemInserted(position);
     }
 
     public boolean onItemMove(int fromPosition, int toPosition) {
@@ -96,8 +105,8 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
         holder.foreground.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (CurrencyShowList.swapBaseCurrencyCid(holder.getAdapterPosition()))
-                    mCallback.onBaseCurrencyChanged();
+                CurrencyShowList.swapBaseCurrencyCid(holder.getAdapterPosition());
+                mCallback.onBaseCurrencyChanged();
             }
         });
         holder.foreground.setOnLongClickListener(new View.OnLongClickListener() {
@@ -151,7 +160,7 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
 
         ViewHolder(View v) {
             super(v);
-            textViewExchangeRate = (TextView) v.findViewById(R.id.textViewExchangeRate);
+            textViewExchangeRate = (TextView) v.findViewById(R.id.checkBox);
             textViewCurrencyCode = (TextView) v.findViewById(R.id.textViewCurrencyCode);
             textViewCurrencyName = (TextView) v.findViewById(R.id.textViewCurrencyName);
             imageViewCountryFlag = (ImageView) v.findViewById(R.id.imageViewCountryFlag);

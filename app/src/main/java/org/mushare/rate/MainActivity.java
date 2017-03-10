@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     private Fragment fragment;
     private FragmentManager fragmentManager;
 
+    private int selectedNavigationItemId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,12 +40,6 @@ public class MainActivity extends AppCompatActivity {
 //        ViewGroup.LayoutParams layoutParams = statusBarCover.getLayoutParams();
 //        layoutParams.height = getStatusBarHeight();
 //        statusBarCover.setLayoutParams(layoutParams);
-
-        fragmentManager = getSupportFragmentManager();
-        fragment = new RateFragment();
-        final FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.main_container, fragment).commit();
-
         BottomNavigationView bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation);
 
@@ -51,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
+                        selectedNavigationItemId = item.getItemId();
+                        switch (selectedNavigationItemId) {
                             case R.id.tab_rate:
                                 fragment = new RateFragment();
                                 break;
@@ -64,12 +61,27 @@ public class MainActivity extends AppCompatActivity {
                         }
                         fragmentManager.popBackStack(null, FragmentManager
                                 .POP_BACK_STACK_INCLUSIVE);
-                        final FragmentTransaction transaction = fragmentManager.beginTransaction();
+                        final FragmentTransaction transaction = fragmentManager
+                                .beginTransaction();
                         transaction.replace(R.id.main_container, fragment).commit();
                         return true;
                     }
                 });
+
+        fragmentManager = getSupportFragmentManager();
+
+        if (savedInstanceState == null) {
+            fragment = new RateFragment();
+            final FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.replace(R.id.main_container, fragment).commit();
+        } else {
+            selectedNavigationItemId = savedInstanceState.getInt("selected_navigation_item_id", R
+                    .id.tab_rate);
+            bottomNavigationView.getMenu().findItem(selectedNavigationItemId).setChecked(true);
+        }
+
     }
+
 
 //    public int getStatusBarHeight() {
 //        int result = 0;
@@ -79,6 +91,12 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //        return result;
 //    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("selected_navigation_item_id", selectedNavigationItemId);
+    }
 
     @Override
     protected void onStart() {

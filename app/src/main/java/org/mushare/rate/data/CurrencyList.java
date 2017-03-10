@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by dklap on 1/5/2017.
@@ -14,6 +15,7 @@ public class CurrencyList {
     private static Map<String, MyCurrency> currencyMap = new HashMap<>();
     private static int revision;
     private static String language;
+    private static boolean isChanged;
 
     public synchronized static void put(String cid, MyCurrency currency) {
         currencyMap.put(cid, currency);
@@ -28,26 +30,26 @@ public class CurrencyList {
         else return 0;
     }
 
-    public synchronized static void setRevision(int revision) {
-        CurrencyList.revision = revision;
+    public synchronized static Set<String> getCidSet() {
+        return currencyMap.keySet();
     }
 
-    public static String getLanguage() {
+    public synchronized static void setRevision(int revision) {
+        CurrencyList.revision = revision;
+        isChanged = true;
+    }
+
+    public synchronized static String getLanguage() {
         return language;
     }
 
-    public static void setLanguage(String language) {
+    public synchronized static void setLanguage(String language) {
         CurrencyList.language = language;
+        isChanged = true;
     }
 
     public synchronized static void cache(SQLiteDatabase db) {
-        Cursor cursor = db.rawQuery("select * from currency_list_cache_info", null);
-        cursor.moveToNext();
-        if (revision < cursor.getInt(0) || (revision == cursor.getInt(0) && language.equals(cursor
-                .getString(1)))) {
-            cursor.close();
-            return;
-        }
+        if (!isChanged) return;
         for (Map.Entry<String, MyCurrency> entry : currencyMap.entrySet()) {
             MyCurrency currency = entry.getValue();
             db.execSQL("insert or replace into currencies values(?, ?, ?, ?)", new String[]{entry
@@ -55,15 +57,13 @@ public class CurrencyList {
         }
         db.execSQL("update currency_list_cache_info set rev = ?, language = ?", new
                 Object[]{revision, language});
+        isChanged = false;
     }
 
     public synchronized static boolean reloadFromCache(SQLiteDatabase db) {
+        if (isChanged) return false;
         Cursor cursor = db.rawQuery("select * from currency_list_cache_info", null);
         cursor.moveToNext();
-        if (revision >= cursor.getInt(0)) {
-            cursor.close();
-            return false;
-        }
         revision = cursor.getInt(0);
         language = cursor.getString(1);
         cursor.close();

@@ -13,6 +13,7 @@ import java.util.Map;
 public class RateList {
     private static Map<String, Double> rateMap = new HashMap<>();
     private static long updateTime = 0;
+    private static boolean isChanged;
 
     public synchronized static long getUpdateTime() {
         return updateTime;
@@ -20,6 +21,7 @@ public class RateList {
 
     public synchronized static void setUpdateTime(long updateTime) {
         RateList.updateTime = updateTime;
+        isChanged = true;
     }
 
     public synchronized static void clear() {
@@ -38,15 +40,18 @@ public class RateList {
     }
 
     public synchronized static void cache(SQLiteDatabase db) {
+        if (!isChanged) return;
         db.execSQL("delete from rates");
         for (Map.Entry<String, Double> entry : rateMap.entrySet()) {
             db.execSQL("insert into rates values(?, ?)", new Object[]{entry.getKey(),
                     entry.getValue()});
         }
         db.execSQL("update rate_list_cache_info set time = ?", new Long[]{updateTime});
+        isChanged = false;
     }
 
     public synchronized static void reloadFromCache(SQLiteDatabase db) {
+        if (isChanged) return;
         Cursor cursor = db.rawQuery("select * from rates", null);
         rateMap.clear();
         while (cursor.moveToNext()) {

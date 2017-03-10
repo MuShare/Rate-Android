@@ -18,8 +18,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table currencies(cid primary key, code, icon, name)");
         db.execSQL("create table rates(cid primary key, rate)");
-        db.execSQL("create table base_currency(cid)");
-        db.execSQL("create table exchange_currencies(cid)");
+        db.execSQL("create table show_currencies(cid)");
         db.execSQL("create table currency_list_cache_info(rev, language)");
         db.execSQL("create table rate_list_cache_info(time)");
         db.execSQL("insert into currencies values('ff80818156b14e160156b1542a9f2ec3', 'BGN', " +
@@ -50,20 +49,20 @@ public class DBOpenHelper extends SQLiteOpenHelper {
                 ", ('ff80818156b14e160156b156119562b8', 'PHP', 'ph', 'Philippine Peso')");
         db.execSQL("insert into currency_list_cache_info values(?, ?)", new Object[]{29,
                 "en-US"});
-        db.execSQL("insert into base_currency values('ff808181568824b701568825c7680000')");
-        db.execSQL("insert into exchange_currencies values('ff80818156b14e160156b153ac9f245f'), " +
-                "('ff80818156b169360156b16a96520a61'), ('ff80818156b14e160156b15342f714c8'), " +
-                "('ff80818156b14e160156b1542a9f2ec3'), ('ff80818156b169360156b16ace9b0f93'), " +
-                "('ff80818156b14e160156b15325930f96'), ('ff80818156b14e160156b154686e33f6'), " +
-                "('ff80818156b14e160156b150a3210000'), ('ff80818156b14e160156b15496cd3928'), " +
-                "('ff80818156b14e160156b154fca0438c'), ('ff80818156b143ff0156b144f9350000'), " +
-                "('ff80818156b14e160156b1552a7d48bf'), ('ff80818156b14e160156b152c9070532'), " +
-                "('ff80818156b14e160156b153077c0a64'), ('ff80818156b14e160156b15572005321'), " +
-                "('ff80818156b14e160156b1536b6319fb'), ('ff80818156b14c280156b14cca430000'), " +
-                "('ff80818156b14e160156b155ac045854'), ('ff80818156b14e160156b155edb95d86'), " +
-                "('ff80818156b14e160156b156119562b8'), ('ff80818156b14e160156b156569667ec'), " +
-                "('ff80818156b14e160156b1566fe96d1e'), ('ff80818156b14e160156b1568f547250'), " +
-                "('ff80818156b169360156b16a60d8052f'), ('ff80818156b14e160156b15386ec1f2d')");
+        db.execSQL("insert into show_currencies values('ff808181568824b701568825c7680000'), " +
+                "('ff80818156b14e160156b153ac9f245f'), ('ff80818156b169360156b16a96520a61'), " +
+                "('ff80818156b14e160156b15342f714c8'), ('ff80818156b14e160156b1542a9f2ec3'), " +
+                "('ff80818156b169360156b16ace9b0f93'), ('ff80818156b14e160156b15325930f96'), " +
+                "('ff80818156b14e160156b154686e33f6'), ('ff80818156b14e160156b150a3210000'), " +
+                "('ff80818156b14e160156b15496cd3928'), ('ff80818156b14e160156b154fca0438c'), " +
+                "('ff80818156b143ff0156b144f9350000'), ('ff80818156b14e160156b1552a7d48bf'), " +
+                "('ff80818156b14e160156b152c9070532'), ('ff80818156b14e160156b153077c0a64'), " +
+                "('ff80818156b14e160156b15572005321'), ('ff80818156b14e160156b1536b6319fb'), " +
+                "('ff80818156b14c280156b14cca430000'), ('ff80818156b14e160156b155ac045854'), " +
+                "('ff80818156b14e160156b155edb95d86'), ('ff80818156b14e160156b156119562b8'), " +
+                "('ff80818156b14e160156b156569667ec'), ('ff80818156b14e160156b1566fe96d1e'), " +
+                "('ff80818156b14e160156b1568f547250'), ('ff80818156b169360156b16a60d8052f'), " +
+                "('ff80818156b14e160156b15386ec1f2d')");
         db.execSQL("insert into rate_list_cache_info values(?)", new Long[]{0L});
     }
 

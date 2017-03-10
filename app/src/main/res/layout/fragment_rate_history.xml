@@ -70,7 +70,8 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/history_chart_bottom_margin"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <ProgressBar
             style="?android:attr/progressBarStyle"
@@ -89,6 +90,5 @@
         android:id="@+id/chart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/history_chart_bottom_margin"
-        android:visibility="gone"/>
+        android:layout_marginBottom="@dimen/history_chart_bottom_margin"/>
 </LinearLayout>

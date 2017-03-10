@@ -7,9 +7,9 @@
     android:layout_height="wrap_content"
     android:clipToPadding="false"
     android:focusableInTouchMode="true"
-    android:paddingBottom="@dimen/list_vertical_margin"
-    android:paddingLeft="@dimen/list_horizontal_margin"
-    android:paddingTop="@dimen/list_vertical_margin"
+    android:paddingBottom="@dimen/list_item_vertical_margin"
+    android:paddingLeft="@dimen/list_item_horizontal_margin"
+    android:paddingTop="@dimen/list_item_vertical_margin"
     tools:ignore="ContentDescription">
 
     <android.support.v7.widget.CardView
@@ -19,8 +19,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="@dimen/flag_horizontal_margin"
-        android:layout_marginRight="@dimen/flag_horizontal_margin"
+        android:layout_marginEnd="@dimen/flag_right_margin"
+        android:layout_marginRight="@dimen/flag_right_margin"
         app:cardCornerRadius="@dimen/flag_corner"
         app:cardPreventCornerOverlap="false"
         app:cardUseCompatPadding="true">
@@ -39,8 +39,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/rate_horizontal_margin"
-        android:layout_marginStart="@dimen/rate_horizontal_margin"
+        android:layout_marginLeft="@dimen/rate_left_margin"
+        android:layout_marginStart="@dimen/rate_left_margin"
         android:background="@null"
         android:enabled="false"
         android:gravity="end"
@@ -49,7 +49,7 @@
         android:imeOptions="flagNoExtractUi|actionDone"
         android:inputType="numberDecimal|numberSigned"
         android:maxLength="17"
-        android:paddingRight="@dimen/list_horizontal_margin"
+        android:paddingRight="@dimen/list_item_horizontal_margin"
         android:textColorHint="@color/colorTextSecondary"/>
 
     <TextView

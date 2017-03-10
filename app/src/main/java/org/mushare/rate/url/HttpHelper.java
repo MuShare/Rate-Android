@@ -28,10 +28,8 @@ public class HttpHelper {
 
                 JSONObject reader = new JSONObject(stream.toString());
                 JSONObject result = reader.getJSONObject("result");
+                if (oldRev == result.getInt("revision")) return responseCode;
                 JSONArray currencies = result.getJSONArray("currencies");
-//                if (CurrencyShowList.getBaseCurrency() == null && currencies.length() > 0)
-//                    CurrencyShowList.setBaseCurrencyCid(currencies.getJSONObject(0).getString
-//                            ("cid"));
                 for (int i = 0; i < currencies.length(); i++) {
                     JSONObject currency = currencies.getJSONObject(i);
                     CurrencyList.put(currency.getString("cid"), new MyCurrency(currency

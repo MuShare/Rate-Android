@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppThemeBase" parent="Theme.AppCompat.Light">
+    <style name="AppThemeBase" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -18,16 +18,15 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.NoActionBar" parent="AppTheme.NoActionBarBase">
-    </style>
+    <style name="AppTheme.NoActionBar" parent="AppTheme.NoActionBarBase"></style>
 
     <style name="AppTheme.ListTitle">
         <!--<item name="textAllCaps">true</item>-->
         <item name="android:textColor">@color/colorAccent</item>
-        <item name="android:paddingLeft">@dimen/list_title_horizontal_margin</item>
-        <item name="android:paddingRight">@dimen/list_title_horizontal_margin</item>
-        <item name="android:paddingBottom">@dimen/list_title_vertical_margin</item>
-        <item name="android:paddingTop">@dimen/list_title_vertical_margin</item>
+        <item name="android:paddingLeft">@dimen/header_horizontal_margin</item>
+        <item name="android:paddingRight">@dimen/header_horizontal_margin</item>
+        <item name="android:paddingBottom">@dimen/header_vertical_margin</item>
+        <item name="android:paddingTop">@dimen/header_vertical_margin</item>
         <!--<item name="android:background">@color/colorListTitleBackground</item>-->
     </style>
 
@@ -63,5 +62,12 @@
     <style name="AppTheme.TextAppearanceMessage">
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/colorTextPrimary</item>
+    </style>
+
+    <style name="AppTheme.TextAppearanceAlphabetIndex">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/colorPrimary</item>
     </style>
 </resources>

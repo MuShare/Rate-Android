@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -12,71 +13,100 @@ import java.util.List;
  */
 
 public class CurrencyShowList {
-    private static String baseCurrencyCid;
-    private static List<String> exchangeCurrencyCids = new ArrayList<>();
+    private static List<String> currencyShowList = new ArrayList<>();
+    private static boolean isChanged;
 
     public synchronized static String getBaseCurrencyCid() {
-        return baseCurrencyCid;
-    }
-
-    public synchronized static void setBaseCurrencyCid(String baseCurrencyCid) {
-        CurrencyShowList.baseCurrencyCid = baseCurrencyCid;
+        return currencyShowList.isEmpty() ? null : currencyShowList.get(0);
     }
 
     public synchronized static MyCurrency getBaseCurrency() {
-        if (baseCurrencyCid == null) return null;
-        else return CurrencyList.get(baseCurrencyCid);
+        String cid = getBaseCurrencyCid();
+        return cid == null ? null : CurrencyList.get(cid);
     }
 
     public synchronized static String getExchangeCurrencyCid(int index) {
-        if (exchangeCurrencyCids.size() > index && index > -1) {
-            return exchangeCurrencyCids.get(index);
+        index++;
+        if (currencyShowList.size() > index && index > 0) {
+            return currencyShowList.get(index);
         } else return null;
     }
 
-    public synchronized static void removeExchangeCurrencyCid(int index) {
-        exchangeCurrencyCids.remove(index);
+    public synchronized static void addExchangeCurrencies(List<String> currencyCids) {
+        currencyShowList.addAll(currencyCids);
+        isChanged = true;
     }
 
-    public synchronized static boolean swapBaseCurrencyCid(int index) {
-        if (exchangeCurrencyCids.size() > index && index > -1) {
-            baseCurrencyCid = exchangeCurrencyCids.set(index, baseCurrencyCid);
-            return true;
-        } else return false;
+    public synchronized static String removeExchangeCurrencyCid(int index) {
+        isChanged = true;
+        return currencyShowList.remove(index + 1);
+    }
+
+    public synchronized static void insertExchangeCurrencyCid(int index, String cid) {
+        currencyShowList.add(index + 1, cid);
+        isChanged = true;
+    }
+
+    public synchronized static void swapBaseCurrencyCid(int index) {
+        Collections.swap(currencyShowList, 0, index + 1);
+        isChanged = true;
     }
 
     public synchronized static void swapExchangeCurrencyCid(int index1, int index2) {
-        Collections.swap(exchangeCurrencyCids, index1, index2);
+        Collections.swap(currencyShowList, index1 + 1, index2 + 1);
+        isChanged = true;
     }
 
     public synchronized static List<MyCurrencyRate> getExchangeCurrencyRateList
             (List<MyCurrencyRate> list) {
         list.clear();
-        for (String cid : exchangeCurrencyCids) {
+        String baseCurrencyCid = getBaseCurrencyCid();
+        for (int i = 1; i < currencyShowList.size(); i++) {
+            String cid = currencyShowList.get(i);
             list.add(new MyCurrencyRate(CurrencyList.get(cid), RateList.get(cid, baseCurrencyCid)));
         }
         return list;
     }
 
-    public synchronized static void cache(SQLiteDatabase db) {
-        db.execSQL("update base_currency set cid = ?", new String[]{baseCurrencyCid});
-        db.execSQL("delete from exchange_currencies");
-        for (String cid : exchangeCurrencyCids) {
-            db.execSQL("insert into exchange_currencies values(?)", new String[]{cid});
+    public synchronized static int getInvisibleCurrencyNumber() {
+        return CurrencyList.getCidSet().size() - currencyShowList.size();
+    }
+
+    public synchronized static List<MyCurrencyWrapper> getInvisibleCurrencyCidList() {
+        List<String> cidList = new LinkedList<>(CurrencyList.getCidSet());
+        cidList.removeAll(currencyShowList);
+        List<MyCurrencyWrapper> list = new LinkedList<>();
+        for (String cid : cidList) {
+            list.add(new MyCurrencyWrapper(cid, CurrencyList.get(cid)));
         }
+        Collections.sort(list);
+        char character = '-';
+        for (MyCurrencyWrapper myCurrencyWrapper : list) {
+            char c = myCurrencyWrapper.getCurrency().getCode().charAt(0);
+            if (c != character) {
+                myCurrencyWrapper.setCharacter(c);
+                character = c;
+            }
+        }
+        return list;
+    }
+
+    public synchronized static void cache(SQLiteDatabase db) {
+        if (!isChanged) return;
+        db.execSQL("delete from show_currencies");
+        for (String cid : currencyShowList) {
+            db.execSQL("insert into show_currencies values(?)", new String[]{cid});
+        }
+        isChanged = false;
     }
 
 
     public synchronized static void reloadFromCache(SQLiteDatabase db) {
-        Cursor cursor = db.rawQuery("select * from base_currency", null);
-        if (cursor.moveToNext()) {
-            baseCurrencyCid = cursor.getString(0);
-        }
-        cursor.close();
-        exchangeCurrencyCids.clear();
-        cursor = db.rawQuery("select * from exchange_currencies", null);
+        if (isChanged) return;
+        currencyShowList.clear();
+        Cursor cursor = db.rawQuery("select * from show_currencies", null);
         while (cursor.moveToNext()) {
-            exchangeCurrencyCids.add(cursor.getString(0));
+            currencyShowList.add(cursor.getString(0));
         }
         cursor.close();
     }

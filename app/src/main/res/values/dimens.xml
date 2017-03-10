@@ -1,17 +1,19 @@
 <resources>
     <dimen name="divider_height">1px</dimen>
-    <!--<dimen name="divider_horizontal_margin">8dp</dimen>-->
     <dimen name="swipe_button_margin">16dp</dimen>
     <dimen name="bottom_navigation_bar_height">56dp</dimen>
-    <dimen name="list_title_horizontal_margin">16dp</dimen>
-    <dimen name="list_title_vertical_margin">4dp</dimen>
-    <dimen name="list_horizontal_margin">16dp</dimen>
-    <dimen name="list_vertical_margin">8dp</dimen>
-    <dimen name="rate_horizontal_margin">8dp</dimen>
-    <!--<dimen name="flag_width">42dp</dimen>-->
-    <!--<dimen name="flag_height">28dp</dimen>-->
-    <dimen name="flag_horizontal_margin">10dp</dimen>
+    <dimen name="header_horizontal_margin">16dp</dimen>
+    <dimen name="header_vertical_margin">4dp</dimen>
+    <dimen name="list_item_horizontal_margin">16dp</dimen>
+    <dimen name="list_item_vertical_margin">8dp</dimen>
+    <!--rate list-->
+    <dimen name="rate_left_margin">8dp</dimen>
+    <dimen name="flag_right_margin">10dp</dimen>
     <dimen name="flag_corner">3dp</dimen>
+    <!--add currency list-->
+    <dimen name="flag_left_margin">40dp</dimen>
+    <dimen name="divider_left_margin">56dp</dimen>
+    <!--history-->
     <dimen name="history_flag_horizontal_margin">24dp</dimen>
     <dimen name="history_equal_sign_horizontal_margin">32dp</dimen>
     <dimen name="history_currency_pair_vertical_margin">16dp</dimen>

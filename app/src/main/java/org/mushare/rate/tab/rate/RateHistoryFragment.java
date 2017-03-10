@@ -61,12 +61,18 @@ public class RateHistoryFragment extends Fragment {
 
     private RateHistory rateHistory = new RateHistory();
     private int timeOffset;
+    private int selectedTabPosition;
     private boolean refreshing = true;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable
             Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            swap = savedInstanceState.getBoolean("swap", false);
+            selectedTabPosition = savedInstanceState.getInt("selected_tab_position", 0);
+        }
+
         View view = inflater.inflate(R.layout.fragment_rate_history, container, false);
 //        view.findViewById(R.id.appbar_layout).setPadding(0, getStatusBarHeight(), 0, 0);
 
@@ -80,7 +86,7 @@ public class RateHistoryFragment extends Fragment {
                 getActivity().onBackPressed();
             }
         });
-        toolbar.inflateMenu(R.menu.add_reminder_item);
+        toolbar.inflateMenu(R.menu.history_fragment_menu);
 
         flagBase = (ImageView) view.findViewById(R.id.imageViewCountryFlagBase);
         flag = (ImageView) view.findViewById(R.id.imageViewCountryFlag);
@@ -89,11 +95,14 @@ public class RateHistoryFragment extends Fragment {
         rate = (TextView) view.findViewById(R.id.textViewRate);
 
         tabLayout = (MyTabLayout) view.findViewById(R.id.tabs_time_range);
+        TabLayout.Tab tab = tabLayout.getTabAt(selectedTabPosition);
+        if (tab != null) tab.select();
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                selectedTabPosition = tab.getPosition();
                 int size = rateHistory.getData().size();
-                switch (tab.getPosition()) {
+                switch (selectedTabPosition) {
                     case 0:
                         timeOffset = size - 30;
                         break;
@@ -180,9 +189,6 @@ public class RateHistoryFragment extends Fragment {
         pair.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pair.setClickable(false);
-                pair.setLongClickable(false);
-                tabLayout.setTouchEnabled(false);
                 swap = !swap;
                 setCurrencyPair();
                 pair.animate().rotationY(15).setDuration(60).setInterpolator(new
@@ -193,9 +199,6 @@ public class RateHistoryFragment extends Fragment {
                                 OvershootInterpolator()).withLayer();
                     }
                 });
-                progressBar.setVisibility(View.VISIBLE);
-                chart.setVisibility(View.GONE);
-                chart.clear();
                 requestHistoryData();
             }
         });
@@ -211,6 +214,12 @@ public class RateHistoryFragment extends Fragment {
 
     void requestHistoryData() {
         refreshing = true;
+        pair.setClickable(false);
+        pair.setLongClickable(false);
+        tabLayout.setTouchEnabled(false);
+        progressBar.setVisibility(View.VISIBLE);
+        chart.setVisibility(View.GONE);
+        chart.clear();
         final String from, to;
         if (!swap) {
             from = cid1;
@@ -289,18 +298,17 @@ public class RateHistoryFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean("refreshing", refreshing);
         outState.putBoolean("swap", swap);
+        outState.putInt("selected_tab_position", selectedTabPosition);
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            refreshing = savedInstanceState.getBoolean("refreshing", true);
-            swap = savedInstanceState.getBoolean("swap", false);
-        }
-    }
+//    @Override
+//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//        if (savedInstanceState != null) {
+//            swap = savedInstanceState.getBoolean("swap", false);
+//        }
+//    }
 
     void refreshDataSet() {
         List<Entry> entries = new ArrayList<>();
@@ -339,7 +347,7 @@ public class RateHistoryFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(RefreshFinishEvent event) {
         int size = rateHistory.getData().size();
-        switch (tabLayout.getSelectedTabPosition()) {
+        switch (selectedTabPosition) {
             case 0:
                 timeOffset = size - 30;
                 break;
