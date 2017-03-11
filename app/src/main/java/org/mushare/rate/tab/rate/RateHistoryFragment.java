@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +26,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.mushare.rate.R;
+import org.mushare.rate.SmoothFragment;
 import org.mushare.rate.data.CurrencyList;
 import org.mushare.rate.data.MyCurrency;
 import org.mushare.rate.data.RateHistory;
@@ -43,7 +43,7 @@ import java.util.List;
  * Created by dklap on 2/14/2017.
  */
 
-public class RateHistoryFragment extends Fragment {
+public class RateHistoryFragment extends SmoothFragment {
     private String cid1;
     private String cid2;
     private boolean swap = false;
@@ -233,6 +233,11 @@ public class RateHistoryFragment extends Fragment {
         Thread thread = new Thread() {
             @Override
             public void run() {
+                try {
+                    sleep(350);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 if (HttpHelper.getRateHistory(from, to, cal.getTimeInMillis(),
                         Calendar.getInstance().getTimeInMillis(), rateHistory) == 200) {
                     EventBus.getDefault().post(new RefreshFinishEvent());

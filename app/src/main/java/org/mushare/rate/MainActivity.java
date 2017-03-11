@@ -63,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
                                 .POP_BACK_STACK_INCLUSIVE);
                         final FragmentTransaction transaction = fragmentManager
                                 .beginTransaction();
-                        transaction.replace(R.id.main_container, fragment).commit();
+                        transaction.setCustomAnimations(R.anim.fragment_enter, 0).replace(R.id
+                                .main_container, fragment).commit();
                         return true;
                     }
                 });

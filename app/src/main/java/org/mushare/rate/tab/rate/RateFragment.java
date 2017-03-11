@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,6 +33,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.mushare.rate.R;
+import org.mushare.rate.SmoothFragment;
 import org.mushare.rate.data.CurrencyList;
 import org.mushare.rate.data.CurrencyShowList;
 import org.mushare.rate.data.MyCurrency;
@@ -55,7 +55,7 @@ import static android.app.Activity.RESULT_OK;
  * Created by dklap on 12/16/2016.
  */
 
-public class RateFragment extends Fragment implements RateRecyclerViewAdapter.Callback {
+public class RateFragment extends SmoothFragment implements RateRecyclerViewAdapter.Callback {
     final static int ADD_CURRENCY_REQUEST = 0;
 
     List<MyCurrencyRate> dataSet = new LinkedList<>();
@@ -379,8 +379,9 @@ public class RateFragment extends Fragment implements RateRecyclerViewAdapter.Ca
         bundle.putString("cid1", CurrencyShowList.getBaseCurrencyCid());
         bundle.putString("cid2", CurrencyShowList.getExchangeCurrencyCid(index));
         fragment.setArguments(bundle);
-        getFragmentManager().beginTransaction().replace(R.id.main_container, fragment)
-                .addToBackStack(null).commit();
+        getFragmentManager().beginTransaction().setCustomAnimations(R.anim.fragment_enter, 0, 0,
+                R.anim.fragment_exit).replace(R.id.main_container,
+                fragment).addToBackStack(null).commit();
     }
 
     @Override

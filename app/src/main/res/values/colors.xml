@@ -15,7 +15,7 @@
     <color name="colorTextDisabled">#32000000</color>
     <color name="colorSwipeActionText">#ffffff</color>
 
-    <color name="colorBottomNavigationBackground">#e6fafafa</color>
+    <color name="colorBottomNavigationBackground">#fafafa</color>
 
     <color name="colorChartLine">#5166b4</color>
     <color name="colorChartHighLightLine">#ef6174</color>
