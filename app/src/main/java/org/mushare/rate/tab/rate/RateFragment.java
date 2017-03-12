@@ -32,8 +32,8 @@ import android.widget.Toast;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.mushare.rate.MyFragment;
 import org.mushare.rate.R;
-import org.mushare.rate.SmoothFragment;
 import org.mushare.rate.data.CurrencyList;
 import org.mushare.rate.data.CurrencyShowList;
 import org.mushare.rate.data.MyCurrency;
@@ -55,7 +55,7 @@ import static android.app.Activity.RESULT_OK;
  * Created by dklap on 12/16/2016.
  */
 
-public class RateFragment extends SmoothFragment implements RateRecyclerViewAdapter.Callback {
+public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.Callback {
     final static int ADD_CURRENCY_REQUEST = 0;
 
     List<MyCurrencyRate> dataSet = new LinkedList<>();
@@ -185,9 +185,9 @@ public class RateFragment extends SmoothFragment implements RateRecyclerViewAdap
                             .TRANSPARENT);
 //                    viewHolder.itemView.setBackground(getResources().getDrawable(R.drawable
 //                            .float_item_background));
-                    ViewCompat.animate(viewHolder.itemView).scaleX(1.05f).scaleY(1.05f)
+                    ViewCompat.animate(viewHolder.itemView).scaleX(1.1f).scaleY(1.1f)
                             .translationZ(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                                    8, getResources().getDisplayMetrics())).setDuration(300)
+                                    4, getResources().getDisplayMetrics())).setDuration(300)
                             .setInterpolator(new OvershootInterpolator()).withLayer();
                 }
                 super.onSelectedChanged(viewHolder, actionState);
@@ -379,9 +379,8 @@ public class RateFragment extends SmoothFragment implements RateRecyclerViewAdap
         bundle.putString("cid1", CurrencyShowList.getBaseCurrencyCid());
         bundle.putString("cid2", CurrencyShowList.getExchangeCurrencyCid(index));
         fragment.setArguments(bundle);
-        getFragmentManager().beginTransaction().setCustomAnimations(R.anim.fragment_enter, 0, 0,
-                R.anim.fragment_exit).replace(R.id.main_container,
-                fragment).addToBackStack(null).commit();
+        getFragmentManager().beginTransaction().replace(R.id.main_container, fragment)
+                .addToBackStack(null).commit();
     }
 
     @Override
@@ -459,6 +458,12 @@ public class RateFragment extends SmoothFragment implements RateRecyclerViewAdap
     @Override
     public void onStartDrag(RateRecyclerViewAdapter.ViewHolder viewHolder) {
         itemTouchHelper.startDrag(viewHolder);
+    }
+
+    @Override
+    public void onFragmentRecalled() {
+        appBarLayout.setExpanded(true, true);
+        recyclerView.smoothScrollToPosition(0);
     }
 
     public static class RefreshFinishEvent {

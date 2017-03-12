@@ -69,7 +69,7 @@
         android:id="@+id/progressBar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/history_chart_bottom_margin"
+        android:layout_marginBottom="@dimen/bottom_navigation_bar_height"
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="gone">
@@ -87,9 +87,27 @@
             android:text="@string/wait"/>
     </LinearLayout>
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/chart"
+    <FrameLayout
+        android:id="@+id/chart_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/history_chart_bottom_margin"/>
+        android:layout_height="match_parent">
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/bottom_navigation_bar_height"/>
+
+        <View
+            android:id="@+id/dotHighlight"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/chart_highlight_dot"
+            android:visibility="invisible"/>
+
+        <include
+            android:id="@+id/marker"
+            layout="@layout/chart_marker"
+            android:visibility="invisible"/>
+    </FrameLayout>
 </LinearLayout>

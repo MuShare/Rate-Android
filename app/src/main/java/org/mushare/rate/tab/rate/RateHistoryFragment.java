@@ -1,10 +1,11 @@
 package org.mushare.rate.tab.rate;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +22,14 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.mushare.rate.MyFragment;
 import org.mushare.rate.R;
-import org.mushare.rate.SmoothFragment;
 import org.mushare.rate.data.CurrencyList;
 import org.mushare.rate.data.MyCurrency;
 import org.mushare.rate.data.RateHistory;
@@ -43,7 +46,7 @@ import java.util.List;
  * Created by dklap on 2/14/2017.
  */
 
-public class RateHistoryFragment extends SmoothFragment {
+public class RateHistoryFragment extends MyFragment {
     private String cid1;
     private String cid2;
     private boolean swap = false;
@@ -55,9 +58,10 @@ public class RateHistoryFragment extends SmoothFragment {
     private TextView rate;
     private LineChart chart;
     private View progressBar;
-    private MyMarkerView mv;
     private View pair;
     private MyTabLayout tabLayout;
+    private View dotHighlight;
+    private TextView textViewMarker;
 
     private RateHistory rateHistory = new RateHistory();
     private int timeOffset;
@@ -136,11 +140,49 @@ public class RateHistoryFragment extends SmoothFragment {
         progressBar = view.findViewById(R.id.progressBar);
         chart = (LineChart) view.findViewById(R.id.chart);
 
-        // create a custom MarkerView (extend MarkerView) and specify the layout
-        // to use for it
-        mv = new MyMarkerView(getContext(), R.layout.chart_marker);
-        mv.setChartView(chart); // For bounds control
-        chart.setMarker(mv); // Set the marker to the chart
+        textViewMarker = (TextView) view.findViewById(R.id.marker);
+        ViewCompat.setElevation(textViewMarker, TypedValue.applyDimension(TypedValue
+                .COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics()));
+        dotHighlight = view.findViewById(R.id.dotHighlight);
+        ViewCompat.setElevation(dotHighlight, TypedValue.applyDimension(TypedValue
+                .COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics()));
+        chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                dotHighlight.setX(h.getXPx() - dotHighlight.getWidth() / 2);
+                dotHighlight.setY(h.getYPx() - dotHighlight.getHeight() / 2);
+                dotHighlight.setVisibility(View.VISIBLE);
+
+                Calendar cal = Calendar.getInstance();
+                cal.setTimeInMillis(rateHistory.getTime());
+                cal.add(Calendar.DATE, (int) e.getX() + timeOffset);
+                DecimalFormat df = new DecimalFormat();
+                if (e.getY() >= 0.01) df.setMaximumFractionDigits(4);
+                else if (e.getY() >= 0.001) df.setMaximumFractionDigits(5);
+                else df.setMaximumFractionDigits(6);
+                textViewMarker.setText(DateFormat.getDateInstance().format(cal.getTime()) + "\n"
+                        + df.format(e.getY()));
+                textViewMarker.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec
+                        .UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec
+                        .UNSPECIFIED));
+                textViewMarker.layout(0, 0, textViewMarker.getMeasuredWidth(), textViewMarker
+                        .getMeasuredHeight());
+                float width = textViewMarker.getWidth() + TypedValue.applyDimension(TypedValue
+                        .COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
+                if (h.getXPx() - width / 2 < 0) {
+                    textViewMarker.setTranslationX(0);
+                } else if (h.getXPx() + width / 2 > chart.getWidth()) {
+                    textViewMarker.setTranslationX(chart.getWidth() - width);
+                } else textViewMarker.setTranslationX(h.getXPx() - width / 2);
+                textViewMarker.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onNothingSelected() {
+                dotHighlight.setVisibility(View.INVISIBLE);
+                textViewMarker.setVisibility(View.INVISIBLE);
+            }
+        });
 
 //        chart.setDragEnabled(false);
         chart.setScaleEnabled(false);
@@ -171,12 +213,14 @@ public class RateHistoryFragment extends SmoothFragment {
         yAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
         yAxis.setTextColor(getResources().getColor(R.color.colorTextPrimary));
         yAxis.setSpaceTop(15);
-        yAxis.setSpaceBottom(15);
+        yAxis.setSpaceBottom(20);
 //        yAxis.setAxisMinimum(0);
         chart.getAxisRight().setEnabled(false);
         chart.getDescription().setEnabled(false);
         chart.getLegend().setEnabled(false);
-
+//        chart.setBackgroundColor(getResources().getColor(R.color.colorListBackground));
+        chart.setExtraBottomOffset(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8,
+                getResources().getDisplayMetrics()));
 //        chart.setAutoScaleMinMaxEnabled(true);
         Bundle bundle = getArguments();
         cid1 = bundle.getString("cid1");
@@ -233,11 +277,6 @@ public class RateHistoryFragment extends SmoothFragment {
         Thread thread = new Thread() {
             @Override
             public void run() {
-                try {
-                    sleep(350);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 if (HttpHelper.getRateHistory(from, to, cal.getTimeInMillis(),
                         Calendar.getInstance().getTimeInMillis(), rateHistory) == 200) {
                     EventBus.getDefault().post(new RefreshFinishEvent());
@@ -276,11 +315,9 @@ public class RateHistoryFragment extends SmoothFragment {
             rate.setText(getString(R.string.unknown));
         else {
             DecimalFormat df = new DecimalFormat();
-            if (exchangeRate >= 1) df.setMaximumFractionDigits(2);
-            else if (exchangeRate >= 0.1) df.setMaximumFractionDigits(3);
-            else if (exchangeRate >= 0.01) df.setMaximumFractionDigits(4);
+            if (exchangeRate >= 0.01) df.setMaximumFractionDigits(4);
             else if (exchangeRate >= 0.001) df.setMaximumFractionDigits(5);
-            else if (exchangeRate >= 0.0001) df.setMaximumFractionDigits(6);
+            else df.setMaximumFractionDigits(6);
             rate.setText(df.format(exchangeRate));
         }
     }
@@ -331,21 +368,21 @@ public class RateHistoryFragment extends SmoothFragment {
         } else {
             dataSet = new LineDataSet(entries, "rates"); // add entries to dataset
             dataSet.setDrawCircles(false);
-            dataSet.setLineWidth(1f);
             dataSet.setColor(getResources().getColor(R.color.colorChartLine));
             dataSet.setDrawHorizontalHighlightIndicator(false);
-            dataSet.setHighlightLineWidth(1);
             dataSet.enableDashedHighlightLine(10, 8, 0);
             dataSet.setHighLightColor(getResources().getColor(R.color.colorChartHighLightLine));
+            dataSet.setHighlightLineWidth(1);
             dataSet.setDrawValues(false);
             dataSet.setDrawFilled(true);
-            dataSet.setFillColor(Color.GRAY);
-            dataSet.setFillAlpha(10);
+            dataSet.setFillColor(dataSet.getColor());
+            dataSet.setFillAlpha(12);
             LineData lineData = new LineData(dataSet);
             chart.setData(lineData);
         }
-        mv.setStartTime(rateHistory.getTime(), timeOffset);
         chart.highlightValues(null);
+        dotHighlight.setVisibility(View.INVISIBLE);
+        textViewMarker.setVisibility(View.INVISIBLE);
         chart.invalidate();
     }
 
@@ -405,6 +442,11 @@ public class RateHistoryFragment extends SmoothFragment {
         pair.setClickable(true);
         pair.setLongClickable(true);
         refreshing = false;
+    }
+
+    @Override
+    public void onFragmentRecalled() {
+        getActivity().onBackPressed();
     }
 
     //    public int getStatusBarHeight() {

@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
@@ -22,10 +21,9 @@ import org.mushare.rate.tab.subscribe.SubscribeFragment;
 public class MainActivity extends AppCompatActivity {
     //    private ViewPager viewPager;
 
-    private Fragment fragment;
     private FragmentManager fragmentManager;
 
-    private int selectedNavigationItemId;
+    private int selectedNavigationItemId = R.id.tab_rate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,24 +45,32 @@ public class MainActivity extends AppCompatActivity {
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        selectedNavigationItemId = item.getItemId();
-                        switch (selectedNavigationItemId) {
-                            case R.id.tab_rate:
-                                fragment = new RateFragment();
-                                break;
-                            case R.id.tab_subscribe:
-                                fragment = new SubscribeFragment();
-                                break;
-                            case R.id.tab_news:
-                                fragment = new NewsFragment();
-                                break;
+                        Fragment fragment;
+                        if (selectedNavigationItemId == item.getItemId()) {
+                            fragment = fragmentManager.findFragmentById(R.id.main_container);
+                            if (fragment instanceof MyFragment)
+                                ((MyFragment) fragment).onFragmentRecalled();
+                        } else {
+                            selectedNavigationItemId = item.getItemId();
+                            switch (selectedNavigationItemId) {
+                                case R.id.tab_rate:
+                                    fragment = new RateFragment();
+                                    break;
+                                case R.id.tab_subscribe:
+                                    fragment = new SubscribeFragment();
+                                    break;
+                                case R.id.tab_news:
+                                    fragment = new NewsFragment();
+                                    break;
+                                default:
+                                    fragment = new RateFragment();
+                                    break;
+                            }
+                            fragmentManager.popBackStack(null, FragmentManager
+                                    .POP_BACK_STACK_INCLUSIVE);
+                            fragmentManager.beginTransaction().replace(R.id.main_container,
+                                    fragment).commit();
                         }
-                        fragmentManager.popBackStack(null, FragmentManager
-                                .POP_BACK_STACK_INCLUSIVE);
-                        final FragmentTransaction transaction = fragmentManager
-                                .beginTransaction();
-                        transaction.setCustomAnimations(R.anim.fragment_enter, 0).replace(R.id
-                                .main_container, fragment).commit();
                         return true;
                     }
                 });
@@ -72,9 +78,8 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
 
         if (savedInstanceState == null) {
-            fragment = new RateFragment();
-            final FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.replace(R.id.main_container, fragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.main_container, new RateFragment())
+                    .commit();
         } else {
             selectedNavigationItemId = savedInstanceState.getInt("selected_navigation_item_id", R
                     .id.tab_rate);

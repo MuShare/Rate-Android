@@ -8,6 +8,7 @@
     android:layout_height="wrap_content"
     android:layout_marginLeft="@dimen/chart_marker_horizontal_margin"
     android:layout_marginRight="@dimen/chart_marker_horizontal_margin"
+    android:layout_marginTop="@dimen/chart_marker_top_margin"
     android:background="@drawable/float_item_background"
     android:gravity="center"
     android:paddingBottom="@dimen/chart_marker_text_vertical_padding"

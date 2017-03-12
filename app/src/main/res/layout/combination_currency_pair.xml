@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/colorBackground"
     android:clickable="true"
     android:paddingBottom="@dimen/history_currency_pair_vertical_margin"
     android:paddingTop="@dimen/history_currency_pair_vertical_margin"
