@@ -369,6 +369,7 @@ public class RateHistoryFragment extends MyFragment {
             dataSet = new LineDataSet(entries, "rates"); // add entries to dataset
             dataSet.setDrawCircles(false);
             dataSet.setColor(getResources().getColor(R.color.colorChartLine));
+            dataSet.setLineWidth(0.5f);
             dataSet.setDrawHorizontalHighlightIndicator(false);
             dataSet.enableDashedHighlightLine(10, 8, 0);
             dataSet.setHighLightColor(getResources().getColor(R.color.colorChartHighLightLine));

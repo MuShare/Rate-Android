@@ -17,6 +17,6 @@
 
     <color name="colorBottomNavigationBackground">#fafafa</color>
 
-    <color name="colorChartLine">#93a0ce</color>
-    <color name="colorChartHighLightLine">#98ef6174</color>
+    <color name="colorChartLine">#5166b4</color>
+    <color name="colorChartHighLightLine">#ef6174</color>
 </resources>

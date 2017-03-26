@@ -95,8 +95,7 @@
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/chart"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/bottom_navigation_bar_height"/>
+            android:layout_height="match_parent"/>
 
         <View
             android:id="@+id/dotHighlight"
