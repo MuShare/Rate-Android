@@ -1,7 +1,7 @@
 # Rate-Android
 Rate Assistant is an exchange rate app, which provides real time rate and exchange rate timeline. Android version only supports rate search now, other functions will be added in the future. 
  
-![Rate-Android](https://github.com/MuShare/Rate-Android/raw/master/Images/rate_andriod.png)
+![Rate-Android](https://raw.githubusercontent.com/MuShare/Rate-Android/master/Images/rate_android.png)
 
 Submit issues on https://github.com/MuShare/Rate-Android/issues.
 
