@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Rate Assistant</string>
     <string name="add_currency_activity_name">Add Currency</string>
+    <string name="change_base_currency_activity_name">Choose Base Currency</string>
 
     <string name="tab_rate">Conversion</string>
     <string name="tab_subscribe">Reminder</string>

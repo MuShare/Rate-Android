@@ -1,47 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clipToPadding="false"
-    android:focusableInTouchMode="true"
-    tools:ignore="ContentDescription">
-
-    <org.mushare.rate.tab.rate.BaseCurrencyEditText
-        android:id="@+id/editTextBase"
-        style="@style/AppTheme.TextAppearanceNormal"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:background="@null"
-        android:enabled="false"
-        android:gravity="end|center_vertical"
-        android:hint="@string/base_currency_default_number"
-        android:imeActionId="6"
-        android:imeOptions="flagNoExtractUi|actionDone"
-        android:inputType="numberDecimal|numberSigned"
-        android:maxLength="17"
-        android:paddingBottom="@dimen/list_item_vertical_margin"
-        android:paddingEnd="@dimen/list_item_horizontal_margin"
-        android:paddingLeft="@dimen/rate_left_margin"
-        android:paddingRight="@dimen/list_item_horizontal_margin"
-        android:paddingStart="@dimen/rate_left_margin"
-        android:paddingTop="@dimen/list_item_vertical_margin"
-        android:textColorHint="@color/colorTextSecondary"/>
+    android:background="?selectableItemBackground"
+    android:clickable="true"
+    android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/currencyBase"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_toLeftOf="@+id/editTextBase"
-        android:layout_toStartOf="@id/editTextBase"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
         android:paddingBottom="@dimen/list_item_vertical_margin"
-        android:paddingTop="@dimen/list_item_vertical_margin">
+        android:paddingLeft="@dimen/list_item_horizontal_margin"
+        android:paddingRight="@dimen/list_item_horizontal_margin"
+        android:paddingTop="@dimen/list_item_vertical_margin"
+        tools:ignore="ContentDescription">
+
+        <TextView
+            android:id="@+id/textViewAlphabet"
+            style="@style/AppTheme.TextAppearanceAlphabetIndex"
+            android:layout_width="16sp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:text="U"/>
 
         <android.support.v7.widget.CardView
             android:id="@+id/cardViewCountryFlag"
@@ -51,22 +38,23 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/flag_right_margin"
-            android:layout_marginLeft="@dimen/list_item_horizontal_margin"
+            android:layout_marginLeft="@dimen/flag_left_margin"
             android:layout_marginRight="@dimen/flag_right_margin"
-            android:layout_marginStart="@dimen/list_item_horizontal_margin"
+            android:layout_marginStart="@dimen/flag_left_margin"
+            app:cardBackgroundColor="@color/colorToolbarBackground"
             app:cardCornerRadius="@dimen/flag_corner"
             app:cardPreventCornerOverlap="false"
             app:cardUseCompatPadding="true">
 
             <ImageView
-                android:id="@+id/imageViewBaseCountryFlag"
+                android:id="@+id/imageViewCountryFlag"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_flag_us"/>
         </android.support.v7.widget.CardView>
 
-
         <TextView
-            android:id="@+id/textViewBaseCurrencyCode"
+            android:id="@+id/textViewCurrencyCode"
             style="@style/AppTheme.TextAppearanceSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -75,18 +63,27 @@
             android:layout_toRightOf="@+id/cardViewCountryFlag"
             android:ellipsize="end"
             android:singleLine="true"
+            android:text="USD"
             android:textAllCaps="true"
             android:typeface="monospace"/>
 
         <TextView
-            android:id="@+id/textViewBaseCurrencyName"
+            android:id="@+id/textViewCurrencyName"
             style="@style/AppTheme.TextAppearanceTiny"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textViewBaseCurrencyCode"
+            android:layout_below="@+id/textViewCurrencyCode"
             android:layout_toEndOf="@+id/cardViewCountryFlag"
             android:layout_toRightOf="@+id/cardViewCountryFlag"
             android:ellipsize="end"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            android:text="US Dollar"/>
+
     </RelativeLayout>
-</RelativeLayout>
+
+    <View
+        android:id="@+id/divider"
+        style="@style/AppTheme.Divider"
+        android:layout_marginLeft="@dimen/divider_left_margin"
+        android:layout_marginStart="@dimen/divider_left_margin"/>
+</LinearLayout>

@@ -20,6 +20,13 @@ public class CurrencyShowList {
         return currencyShowList.isEmpty() ? null : currencyShowList.get(0);
     }
 
+    public synchronized static void setBaseCurrencyCid(String cid) {
+        int index;
+        if ((index = currencyShowList.indexOf(cid)) == -1) currencyShowList.set(0, cid);
+        else Collections.swap(currencyShowList, 0, index);
+        isChanged = true;
+    }
+
     public synchronized static MyCurrency getBaseCurrency() {
         String cid = getBaseCurrencyCid();
         return cid == null ? null : CurrencyList.get(cid);
@@ -75,6 +82,25 @@ public class CurrencyShowList {
     public synchronized static List<MyCurrencyWrapper> getInvisibleCurrencyCidList() {
         List<String> cidList = new LinkedList<>(CurrencyList.getCidSet());
         cidList.removeAll(currencyShowList);
+        List<MyCurrencyWrapper> list = new LinkedList<>();
+        for (String cid : cidList) {
+            list.add(new MyCurrencyWrapper(cid, CurrencyList.get(cid)));
+        }
+        Collections.sort(list);
+        char character = '-';
+        for (MyCurrencyWrapper myCurrencyWrapper : list) {
+            char c = myCurrencyWrapper.getCurrency().getCode().charAt(0);
+            if (c != character) {
+                myCurrencyWrapper.setCharacter(c);
+                character = c;
+            }
+        }
+        return list;
+    }
+
+    public synchronized static List<MyCurrencyWrapper> getAvailableBaseCurrencyCidList() {
+        List<String> cidList = new LinkedList<>(CurrencyList.getCidSet());
+        cidList.remove(getBaseCurrencyCid());
         List<MyCurrencyWrapper> list = new LinkedList<>();
         for (String cid : cidList) {
             list.add(new MyCurrencyWrapper(cid, CurrencyList.get(cid)));

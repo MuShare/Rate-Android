@@ -19,14 +19,12 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.TypedValue;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -61,12 +59,13 @@ import static android.app.Activity.RESULT_OK;
 
 public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.Callback {
     final static int ADD_CURRENCY_REQUEST = 0;
+    final static int CHANGE_BASE_CURRENCY_REQUEST = 1;
 
     List<MyCurrencyRate> dataSet = new LinkedList<>();
 
+    View viewBaseCurrency;
     SwipeRefreshLayout swipeRefreshLayout;
     EditText editText;
-    View viewBaseCurrency;
     TextView textViewBaseCurrencyName, textViewBaseCurrencyInfo;
     ImageView imageViewBaseCountryFlag;
     RateRecyclerViewAdapter adapter;
@@ -221,30 +220,6 @@ public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.
         imageViewBaseCountryFlag = (ImageView) view.findViewById(R.id.imageViewBaseCountryFlag);
 
         editText = (EditText) view.findViewById(R.id.editTextBase);
-        editText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    editText.clearFocus();
-                    return true;
-                }
-                return false;
-            }
-        });
-        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    InputMethodManager keyboard = (InputMethodManager) getContext()
-                            .getSystemService(Context.INPUT_METHOD_SERVICE);
-                    keyboard.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                } else {
-                    InputMethodManager keyboard = (InputMethodManager) getContext()
-                            .getSystemService(Context.INPUT_METHOD_SERVICE);
-                    keyboard.showSoftInput(editText, InputMethodManager.SHOW_FORCED);
-                }
-            }
-        });
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -281,13 +256,11 @@ public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.
             }
         });
 
-        viewBaseCurrency = view.findViewById(R.id.baseCurrency);
-        viewBaseCurrency.setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.currencyBase).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (editText.isEnabled()) {
-                    editText.requestFocus();
-                }
+                Intent intent = new Intent(getContext(), ChangeBaseCurrencyActivity.class);
+                startActivityForResult(intent, CHANGE_BASE_CURRENCY_REQUEST);
             }
         });
 
@@ -331,6 +304,8 @@ public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.
                 return false;
             }
         });
+
+        viewBaseCurrency = view.findViewById(R.id.baseCurrency);
 
         checkAddCurrencyButtonVisibility();
         setBaseCurrency();
@@ -400,12 +375,6 @@ public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.
         }
     }
 
-    void checkAddCurrencyButtonVisibility() {
-        showAddButton = CurrencyShowList.getInvisibleCurrencyNumber() > 0;
-        if (showAddButton) fabAdd.show();
-        else fabAdd.hide();
-    }
-
     void startBaseCurrencyViewAnimation() {
         float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, -8, getResources()
                 .getDisplayMetrics());
@@ -417,6 +386,12 @@ public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.
                         OvershootInterpolator()).withLayer();
             }
         });
+    }
+
+    void checkAddCurrencyButtonVisibility() {
+        showAddButton = CurrencyShowList.getInvisibleCurrencyNumber() > 0;
+        if (showAddButton) fabAdd.show();
+        else fabAdd.hide();
     }
 
     public void showTimeLine(int index) {
@@ -439,6 +414,13 @@ public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.
                 CurrencyShowList.getExchangeCurrencyRateList(dataSet);
                 adapter.notifyDataSetChanged();
                 checkAddCurrencyButtonVisibility();
+            }
+        } else if (requestCode == CHANGE_BASE_CURRENCY_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                CurrencyShowList.setBaseCurrencyCid(data.getStringExtra("base_currency"));
+                CurrencyShowList.getExchangeCurrencyRateList(dataSet);
+                setBaseCurrency();
+                adapter.notifyDataSetChanged();
             }
         }
     }
@@ -495,7 +477,7 @@ public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.
     }
 
     @Override
-    public void onBaseCurrencyChanged() {
+    public void onBaseCurrencySwapped() {
         CurrencyShowList.getExchangeCurrencyRateList(dataSet);
         setBaseCurrency();
         startBaseCurrencyViewAnimation();
@@ -513,10 +495,10 @@ public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.
         recyclerView.smoothScrollToPosition(0);
     }
 
-    public static class RefreshFinishEvent {
+    private static class RefreshFinishEvent {
     }
 
-    public static class RefreshFailEvent {
+    private static class RefreshFailEvent {
     }
 }
 

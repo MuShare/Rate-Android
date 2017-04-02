@@ -22,8 +22,10 @@
         </activity>
         <activity
             android:name=".tab.rate.AddCurrencyActivity"
-            android:label="@string/add_currency_activity_name"
-            android:screenOrientation="portrait"/>
+            android:label="@string/add_currency_activity_name"/>
+        <activity
+            android:name=".tab.rate.ChangeBaseCurrencyActivity"
+            android:label="@string/change_base_currency_activity_name"/>
     </application>
 
 </manifest>

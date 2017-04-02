@@ -4,8 +4,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,34 +11,27 @@ import org.mushare.rate.R;
 import org.mushare.rate.data.MyCurrency;
 import org.mushare.rate.data.MyCurrencyWrapper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by dklap on 3/9/2017.
  */
 
-class AddCurrencyRecyclerViewAdapter extends RecyclerView
-        .Adapter<AddCurrencyRecyclerViewAdapter.ViewHolder> {
+class ChangeBaseCurrencyRecyclerViewAdapter extends RecyclerView
+        .Adapter<ChangeBaseCurrencyRecyclerViewAdapter.ViewHolder> {
     private List<MyCurrencyWrapper> mDataset;
-    private ArrayList<String> mSelected = new ArrayList<>();
+    private Callback mCallback;
 
-    AddCurrencyRecyclerViewAdapter(List<MyCurrencyWrapper> dataset) {
+    ChangeBaseCurrencyRecyclerViewAdapter(List<MyCurrencyWrapper> dataset, Callback
+            callback) {
         mDataset = dataset;
-    }
-
-    ArrayList<String> getSelected() {
-        return mSelected;
-    }
-
-    void setSelected(ArrayList<String> selected) {
-        mSelected = selected;
+        mCallback = callback;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout
-                .list_item_currency_add, parent, false));
+                .list_item_base_currency_change, parent, false));
     }
 
     @Override
@@ -57,13 +48,10 @@ class AddCurrencyRecyclerViewAdapter extends RecyclerView
         if (resID != 0) {
             holder.imageViewCountryFlag.setImageResource(resID);
         }
-        holder.checkBox.setOnCheckedChangeListener(null);
-        holder.checkBox.setChecked(mSelected.contains(myCurrencyWrapper.getCid()));
-        holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) mSelected.add(myCurrencyWrapper.getCid());
-                else mSelected.remove(myCurrencyWrapper.getCid());
+            public void onClick(View v) {
+                mCallback.onBaseCurrencySelected(myCurrencyWrapper.getCid());
             }
         });
     }
@@ -71,6 +59,10 @@ class AddCurrencyRecyclerViewAdapter extends RecyclerView
     @Override
     public int getItemCount() {
         return mDataset.size();
+    }
+
+    interface Callback {
+        void onBaseCurrencySelected(String cid);
     }
 
     // Provide a reference to the views for each data item
@@ -82,7 +74,6 @@ class AddCurrencyRecyclerViewAdapter extends RecyclerView
         TextView textViewCurrencyCode;
         TextView textViewCurrencyName;
         ImageView imageViewCountryFlag;
-        CheckBox checkBox;
 
         ViewHolder(View v) {
             super(v);
@@ -90,13 +81,6 @@ class AddCurrencyRecyclerViewAdapter extends RecyclerView
             textViewCurrencyCode = (TextView) v.findViewById(R.id.textViewCurrencyCode);
             textViewCurrencyName = (TextView) v.findViewById(R.id.textViewCurrencyName);
             imageViewCountryFlag = (ImageView) v.findViewById(R.id.imageViewCountryFlag);
-            checkBox = (CheckBox) v.findViewById(R.id.checkBox);
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    checkBox.toggle();
-                }
-            });
         }
 
     }

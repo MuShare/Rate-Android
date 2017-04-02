@@ -1,5 +1,6 @@
 package org.mushare.rate.tab.rate;
 
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -189,14 +190,16 @@ public class RateHistoryFragment extends MyFragment {
 //        chart.setScaleYEnabled(false);
         chart.setNoDataText(getString(R.string.error_refresh_fail));
         chart.setNoDataTextColor(getResources().getColor(R.color.colorTextPrimary));
+        chart.getRenderer().getPaintRender().setStrokeCap(Paint.Cap.ROUND);
 
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setLabelCount(3);
-        xAxis.setGranularity(1);
+//        xAxis.setGranularity(1);
 //        xAxis.setCenterAxisLabels(true);
         xAxis.setAvoidFirstLastClipping(true);
-        xAxis.setDrawGridLines(false);
+        xAxis.setGridColor(getResources().getColor(R.color.colorListDivider));
+        xAxis.setAxisLineColor(getResources().getColor(R.color.colorListDivider));
         xAxis.setTextColor(getResources().getColor(R.color.colorTextPrimary));
         xAxis.setValueFormatter(new IAxisValueFormatter() {
 
@@ -213,7 +216,9 @@ public class RateHistoryFragment extends MyFragment {
         yAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
         yAxis.setTextColor(getResources().getColor(R.color.colorTextPrimary));
         yAxis.setSpaceTop(15);
-        yAxis.setSpaceBottom(20);
+        yAxis.setSpaceBottom(45);
+        yAxis.setGridColor(getResources().getColor(R.color.colorListDivider));
+        yAxis.setAxisLineColor(getResources().getColor(R.color.colorListDivider));
 //        yAxis.setAxisMinimum(0);
         chart.getAxisRight().setEnabled(false);
         chart.getDescription().setEnabled(false);
@@ -369,9 +374,10 @@ public class RateHistoryFragment extends MyFragment {
             dataSet = new LineDataSet(entries, "rates"); // add entries to dataset
             dataSet.setDrawCircles(false);
             dataSet.setColor(getResources().getColor(R.color.colorChartLine));
-            dataSet.setLineWidth(0.5f);
+//            dataSet.setLineWidth(0.8f);
             dataSet.setDrawHorizontalHighlightIndicator(false);
-            dataSet.enableDashedHighlightLine(10, 8, 0);
+            dataSet.enableDashedHighlightLine(10, 10, 0);
+//            dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
             dataSet.setHighLightColor(getResources().getColor(R.color.colorChartHighLightLine));
             dataSet.setHighlightLineWidth(1);
             dataSet.setDrawValues(false);
@@ -458,10 +464,10 @@ public class RateHistoryFragment extends MyFragment {
 //        }
 //        return result;
 //    }
-    public static class RefreshFinishEvent {
+    private static class RefreshFinishEvent {
     }
 
-    public static class RefreshFailEvent {
+    private static class RefreshFailEvent {
     }
 }
 

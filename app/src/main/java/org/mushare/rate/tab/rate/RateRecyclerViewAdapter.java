@@ -36,20 +36,20 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
         mCallback = myCallback;
     }
 
-    public String onItemDismiss(int position) {
+    String onItemDismiss(int position) {
         mDataset.remove(position);
         notifyItemRemoved(position);
         return CurrencyShowList.removeExchangeCurrencyCid(position);
     }
 
-    public void onItemInsert(int position, String cid) {
+    void onItemInsert(int position, String cid) {
         mDataset.add(position, new MyCurrencyRate(CurrencyList.get(cid), RateList.get(cid,
                 CurrencyShowList.getBaseCurrencyCid())));
         CurrencyShowList.insertExchangeCurrencyCid(position, cid);
         notifyItemInserted(position);
     }
 
-    public boolean onItemMove(int fromPosition, int toPosition) {
+    boolean onItemMove(int fromPosition, int toPosition) {
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {
                 Collections.swap(mDataset, i, i + 1);
@@ -106,7 +106,7 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
             @Override
             public void onClick(View v) {
                 CurrencyShowList.swapBaseCurrencyCid(holder.getAdapterPosition());
-                mCallback.onBaseCurrencyChanged();
+                mCallback.onBaseCurrencySwapped();
             }
         });
         holder.foreground.setOnLongClickListener(new View.OnLongClickListener() {
@@ -114,6 +114,13 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
             public boolean onLongClick(View v) {
                 mCallback.onStartDrag(holder);
                 return true;
+            }
+        });
+        holder.textViewExchangeRate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CurrencyShowList.swapBaseCurrencyCid(holder.getAdapterPosition());
+                mCallback.onBaseCurrencySwapped();
             }
         });
         holder.textViewExchangeRate.setOnLongClickListener(new View.OnLongClickListener() {
@@ -142,7 +149,7 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
 
 
     interface Callback {
-        void onBaseCurrencyChanged();
+        void onBaseCurrencySwapped();
 
         void onStartDrag(ViewHolder viewHolder);
     }
@@ -160,7 +167,7 @@ class RateRecyclerViewAdapter extends RecyclerView.Adapter<RateRecyclerViewAdapt
 
         ViewHolder(View v) {
             super(v);
-            textViewExchangeRate = (TextView) v.findViewById(R.id.checkBox);
+            textViewExchangeRate = (TextView) v.findViewById(R.id.textViewRate);
             textViewCurrencyCode = (TextView) v.findViewById(R.id.textViewCurrencyCode);
             textViewCurrencyName = (TextView) v.findViewById(R.id.textViewCurrencyName);
             imageViewCountryFlag = (ImageView) v.findViewById(R.id.imageViewCountryFlag);
