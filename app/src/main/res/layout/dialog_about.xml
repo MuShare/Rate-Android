@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/about_margin"
+        android:layout_marginRight="@dimen/about_margin"
+        android:layout_marginTop="@dimen/about_margin"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/about_divide_space"
+            android:tint="@color/colorPrimary"
+            app:srcCompat="@drawable/ic_logo"
+            tools:ignore="ContentDescription"/>
+
+        <org.mushare.rate.tab.rate.HTMLTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/about_divide_space"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:text="@string/about"
+            android:textColorLink="@color/colorPrimary"/>
+
+        <org.mushare.rate.tab.rate.HTMLTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/about_divide_space"
+            android:fontFamily="sans-serif-condensed"
+            android:text="@string/acknowledgement"/>
+
+        <View
+            style="@style/AppTheme.Divider"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginBottom="@dimen/about_divide_space"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/feedback"/>
+    </LinearLayout>
+</ScrollView>

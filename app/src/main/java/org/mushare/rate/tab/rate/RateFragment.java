@@ -1,13 +1,17 @@
 package org.mushare.rate.tab.rate;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -70,9 +74,13 @@ public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.
     Toolbar toolbar;
     AppBarLayout appBarLayout;
     ItemTouchHelper itemTouchHelper;
+    FloatingActionButton fabAdd;
+
+    AlertDialog dialogAbout;
 
     private boolean refreshing = true;
     private boolean appBarExpanded = true;
+    private boolean showAddButton = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
@@ -80,6 +88,7 @@ public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.
         if (savedInstanceState != null) {
             refreshing = savedInstanceState.getBoolean("refreshing", true);
             appBarExpanded = savedInstanceState.getBoolean("appbar_expanded", true);
+            if (savedInstanceState.getBoolean("show_about_dialog")) showAboutDialog();
         }
 
         View view = inflater.inflate(R.layout.fragment_rate, container, false);
@@ -112,7 +121,6 @@ public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.
         ItemTouchHelper.Callback callback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP
                 | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            int oldX = 0;
 
             @Override
             public boolean isLongPressDragEnabled() {
@@ -135,7 +143,7 @@ public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.
                 if (direction == ItemTouchHelper.RIGHT) {
                     final int position = viewHolder.getAdapterPosition();
                     final String cid = adapter.onItemDismiss(position);
-                    checkAddCurrencyMenuItemVisibility();
+                    checkAddCurrencyButtonVisibility();
 //                    Snackbar snackbar = Snackbar.make(viewHolder.itemView, R.string
 //                                    .remove_currency_snackbar_message,
 //                            BaseTransientBottomBar.LENGTH_LONG).setAction(R.string
@@ -159,18 +167,16 @@ public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.
                     viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
 
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-                    if (dX > 0 && oldX <= 0) {
+                    if (dX > 0) {
                         viewHolder.itemView.findViewById(R.id.timeline_background).setVisibility
                                 (View.INVISIBLE);
                         viewHolder.itemView.findViewById(R.id.delete_background).setVisibility(View
                                 .VISIBLE);
-                        oldX = 1;
-                    } else if (dX < 0 && oldX >= 0) {
+                    } else if (dX < 0) {
                         viewHolder.itemView.findViewById(R.id.timeline_background).setVisibility
                                 (View.VISIBLE);
                         viewHolder.itemView.findViewById(R.id.delete_background).setVisibility(View
                                 .INVISIBLE);
-                        oldX = -1;
                     }
                     viewHolder.itemView.findViewById(R.id.foreground).setTranslationX(dX);
                 } else super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState,
@@ -205,7 +211,6 @@ public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.
                         .setDuration(300).setInterpolator(new OvershootInterpolator()).withLayer();
                 viewHolder.itemView.findViewById(R.id.timeline_background).setVisibility(View.GONE);
                 viewHolder.itemView.findViewById(R.id.delete_background).setVisibility(View.GONE);
-                oldX = 0;
             }
         };
         itemTouchHelper = new ItemTouchHelper(callback);
@@ -296,21 +301,38 @@ public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.
             }
         });
 
+        fabAdd = (FloatingActionButton) view.findViewById(R.id.actionAdd);
+        fabAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), AddCurrencyActivity.class);
+                startActivityForResult(intent, ADD_CURRENCY_REQUEST);
+            }
+        });
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (showAddButton && dy > 0 && fabAdd.isShown())
+                    fabAdd.hide();
+                else if (showAddButton && dy < 0 && !fabAdd.isShown())
+                    fabAdd.show();
+            }
+        });
+
         toolbar.inflateMenu(R.menu.rate_fragment_menu);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                if (item.getItemId() == R.id.action_add) {
-                    Intent intent = new Intent(getContext(), AddCurrencyActivity.class);
-                    startActivityForResult(intent, ADD_CURRENCY_REQUEST);
-                } else if (item.getItemId() == R.id.action_refresh && !refreshing) {
+                if (item.getItemId() == R.id.action_refresh && !refreshing) {
                     refresh();
+                } else if (item.getItemId() == R.id.action_about) {
+                    showAboutDialog();
                 }
                 return false;
             }
         });
 
-        checkAddCurrencyMenuItemVisibility();
+        checkAddCurrencyButtonVisibility();
         setBaseCurrency();
         CurrencyShowList.getExchangeCurrencyRateList(dataSet);
         adapter.notifyDataSetChanged();
@@ -320,6 +342,29 @@ public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.
                     DateFormat.getDateTimeInstance().format(new Date(RateList.getUpdateTime())));
 
         return view;
+    }
+
+    void showAboutDialog() {
+        if (dialogAbout != null) dialogAbout.show();
+        else {
+            dialogAbout = new AlertDialog.Builder(getContext()).setView(R.layout.dialog_about)
+                    .setPositiveButton(getString(R.string.feedback_yes), new DialogInterface
+                            .OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            final String appPackageName = RateFragment.this.getContext()
+                                    .getPackageName();
+                            try {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse
+                                        ("market://details?id=" + appPackageName)));
+                            } catch (android.content.ActivityNotFoundException e) {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse
+                                        ("https://play.google.com/store/apps/details?id=" +
+                                                appPackageName)));
+                            }
+                        }
+                    }).setNegativeButton(getString(R.string.feedback_no), null).show();
+        }
     }
 
     void refresh() {
@@ -355,9 +400,10 @@ public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.
         }
     }
 
-    void checkAddCurrencyMenuItemVisibility() {
-        toolbar.getMenu().findItem(R.id.action_add).setVisible(CurrencyShowList
-                .getInvisibleCurrencyNumber() > 0);
+    void checkAddCurrencyButtonVisibility() {
+        showAddButton = CurrencyShowList.getInvisibleCurrencyNumber() > 0;
+        if (showAddButton) fabAdd.show();
+        else fabAdd.hide();
     }
 
     void startBaseCurrencyViewAnimation() {
@@ -392,7 +438,7 @@ public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.
                 CurrencyShowList.addExchangeCurrencies(data.getStringArrayListExtra("currency"));
                 CurrencyShowList.getExchangeCurrencyRateList(dataSet);
                 adapter.notifyDataSetChanged();
-                checkAddCurrencyMenuItemVisibility();
+                checkAddCurrencyButtonVisibility();
             }
         }
     }
@@ -425,6 +471,7 @@ public class RateFragment extends MyFragment implements RateRecyclerViewAdapter.
         super.onSaveInstanceState(outState);
         outState.putBoolean("refreshing", refreshing);
         outState.putBoolean("appbar_expanded", appBarExpanded);
+        outState.putBoolean("show_about_dialog", dialogAbout != null && dialogAbout.isShowing());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

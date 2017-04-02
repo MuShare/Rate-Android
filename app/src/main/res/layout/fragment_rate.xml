@@ -83,5 +83,15 @@
 
     </LinearLayout>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/actionAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="@dimen/floating_button_vertical_margin"
+        android:layout_marginLeft="@dimen/floating_button_horizontal_margin"
+        android:layout_marginRight="@dimen/floating_button_horizontal_margin"
+        android:src="@drawable/ic_action_list_add"
+        android:visibility="invisible"/>
 
 </android.support.design.widget.CoordinatorLayout>

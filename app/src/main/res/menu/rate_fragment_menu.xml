@@ -6,8 +6,8 @@
         android:title="@string/action_refresh"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/action_add"
-        android:icon="@drawable/ic_action_list_add"
-        android:title="@string/action_add_currency"
+        android:id="@+id/action_about"
+        android:icon="@drawable/ic_action_about"
+        android:title="@string/action_about"
         app:showAsAction="ifRoom"/>
 </menu>

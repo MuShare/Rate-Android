@@ -6,10 +6,14 @@
     <dimen name="header_vertical_margin">4dp</dimen>
     <dimen name="list_item_horizontal_margin">16dp</dimen>
     <dimen name="list_item_vertical_margin">10dp</dimen>
+    <dimen name="about_margin">24dp</dimen>
+    <dimen name="about_divide_space">16dp</dimen>
     <!--rate list-->
     <dimen name="rate_left_margin">8dp</dimen>
     <dimen name="flag_right_margin">10dp</dimen>
     <dimen name="flag_corner">3dp</dimen>
+    <dimen name="floating_button_horizontal_margin">16dp</dimen>
+    <dimen name="floating_button_vertical_margin">24dp</dimen>
     <!--add currency list-->
     <dimen name="flag_left_margin">40dp</dimen>
     <dimen name="divider_left_margin">56dp</dimen>
