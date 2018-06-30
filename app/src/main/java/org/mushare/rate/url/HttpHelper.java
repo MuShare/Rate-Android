@@ -20,7 +20,7 @@ public class HttpHelper {
 
     static public int getCurrencyList(String lan, int oldRev) {
         StringBuilder stream = new StringBuilder();
-        int responseCode = HttpDataHandler.sendGet(host + "api/currencies", "lan=" + lan +
+        int responseCode = HttpDataHandler.sendGet(host + "api/currencies/list", "lan=" + lan +
                 "&rev=" + oldRev, stream);
 
         if (responseCode == 200) {
